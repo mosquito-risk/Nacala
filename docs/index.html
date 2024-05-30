@@ -1,509 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
-  <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="Nacala-Roof-Material: Drone Imagery for Roof Classification, Segmentation, and Counting to Support Mosquito-borne Disease Risk Assessment">
-  <meta property="og:title" content="Nacala-Roof-Material"/>
-  <!-- <meta property="og:description" content="Large scale multi-modal remote sensing data"/> -->
-  <meta property="og:url" content="https://mosquito-risk.github.io/Nacala"/>
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="images/banner2.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
+    <meta name="description"
+        content="Nacala-Roof-Material: Drone Imagery for Roof Classification, Segmentation, and Counting to Support Mosquito-borne Disease Risk Assessment">
+    <meta name="twitter:title" content="Nacala-Roof-Material">
+    <!-- <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG"> -->
+    <meta name="twitter:image" content="images/banner2.png">
+    <!-- <meta name="twitter:card" content="Nacala-Roof-Material"> -->
+    <!-- Keywords for your paper to be indexed by-->
+    <meta name="keywords"
+        content="multi-task, instance segmentation, semantic segmentation, type classification, malaria risk assessment, remote sensing, drone imagery">
 
+    <meta property="og:url" content="https://mosquito-risk.github.io/Nacala" />
+    <meta property="og:image" content="images/banner2.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
-  <meta name="twitter:title" content="MMEarth">
-  <!-- <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG"> -->
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/banner2.png">
-  <!-- <meta name="twitter:card" content="MMEarth"> -->
-  <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="representation learning,self-supervised learning,multi-modal, multi-task, masked autoencoder, Earth observation, remote sensing, satellite images, Sentinel-2">
-  <meta name="viewport" content="width=1200">
+    <title>Nacala-Roof-Material</title>
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="style/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="style/css/index.css">
 
-
-  <title>Nacala-Roof-Material</title>
-  <!-- <link rel="icon" type="image/x-icon" href="static/images/logo.png"> -->
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-  rel="stylesheet">
-
-  <link rel="stylesheet" href="css/bulma.min.css">
-  <link rel="stylesheet" href="css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="css/bulma-slider.min.css">
-  <link rel="stylesheet" href="css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-  <script defer src="js/fontawesome.all.min.js"></script>
-  <script src="js/bulma-carousel.min.js"></script>
-  <script src="js/bulma-slider.min.js"></script>
-  <script src="js/index.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+    <script defer src="/style/fontawesome.all.min.js"></script>
+    <script src="style/bulma-slider.min.js"></script>
 </head>
+
 <body>
-
-
-  <section class="hero is-light">
-    
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Nacala-Roof-Material: Drone Imagery for Roof Classification, Segmentation, and Counting to Support Mosquito-borne Disease Risk Assessment</h1>
-
-            <div class="centered">
-              <div class="author-row">
-                  <div class="col-4 text-center">
-                    <a href="https://scholar.google.com/citations?user=LY1bSd8AAAAJ&hl=en&oi=ao"  target="_blank">
-                      <p>Venkanna Babu Guthula</p></a>
-                  </div>
-                  <div class="col-4 text-center">
-                    <a href="https://scholar.google.de/citations?hl=en&user=k9EWJmcAAAAJ&view_op=list_works"  target="_blank">
-                      <p>Stefan Oehmcke</p></a>
-                  </div>
-                  <div class="col-4 text-center">
-                    <a href="https://scholar.google.com/citations?user=p58Vlu4AAAAJ&hl=en&oi=ao"  target="_blank">
-                      <p>Remígio Chilaule</p></a>
-                  </div>
-                  <div class="col-4 text-center">
-                    <a href="https://scholar.google.com/citations?user=nOSslqEAAAAJ&hl=en"  target="_blank">
-                      <p>Hui Zhang</p></a>
-                  </div>
-              </div>
-              <div class="author-row">
-                <div class="col-4 text-center">
-                  <a href="https://langnico.github.io/"  target="_blank">
-                    <p>Nico Lang</p></a>
-                </div>
-                <div class="col-4 text-center">
-                  <a href="https://scholar.google.de/citations?hl=en&user=lwSTZGgAAAAJ&view_op=list_works&sortby=pubdate"  target="_blank">
-                    <p>Ankit Kariryaa</p></a> 
-                </div>
-                <div class="col-4 text-center">
-                  <a href="https://scholar.google.de/citations?user=uyvzvC0AAAAJ&hl=en&oi=ao"  target="_blank">
-                    <p>Johan Mottelson</p></a> 
-                </div>
-                <div class="col-4 text-center">
-                  <a href="https://christian-igel.github.io/"  target="_blank">
-                    <p>Christian Igel</p></a>
-                </div>
-            </div>
-
-                  <div class="is-size-5 publication-authors">
-                    <a href="https://di.ku.dk/english/" style="color:#3273dc;">
-                    <span class="author-block">University of Copenhagen<br>
-                      <!-- Conferance name and year -->
-                    </span>
-                  </a>
-                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
-                  </div>
-            </div>
-
-                  <div class="column has-text-centered">
-                    <div class="publication-links">
-                         <!-- Arxiv PDF link -->
-                      <span class="link-block">
-                        <a href="https://arxiv.org/pdf/2405.02771.pdf" target="_blank"
-                        class="external-link button is-normal is-rounded is-dark">
-                        <span class="icon">
-                          <i class="fas fa-file-pdf"></i>
-                        </span>
-                        <span>Paper</span>
-                      </a>
-                    </span>
-
-
-                  <!-- Github link -->
-                  <span class="link-block">
-                    <a href="https://github.com/vishalned/MMEarth-data" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Code - Data</span>
-                  </a>
-                </span>
-
-                <span class="link-block">
-                  <a href="https://github.com/vishalned/MMEarth-train" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code - Model</span>
-                </a>
-              </span>
-
-                <!-- ArXiv abstract Link -->
-                <span class="link-block">
-                  <a href="https://arxiv.org/abs/2405.02771" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr>
-<section class="section hero is-light", style="margin-top: -50px">
-  <figure class="">
-    <img src="static/images/banner2.png" alt="MMEarth banner">
-  </figure>
-</section>
-
-
-<!-- Teaser video-->
-<!-- <section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <source src="static/videos/banner_video.mp4"
-        type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
-      </h2>
-    </div>
-  </div>
-</section> -->
-<!-- End teaser video -->
-
-<!-- Paper abstract -->
-
-
-<section class="section hero">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            The various attributes of buildings such as roof material, quality and geometry help in the risk assessment of vector-borne diseases. Particularly roof materials are associated with a higher risk of malaria, and increasing modern construction materials in Sub-Saharan Africa may have contributed to the reduction of malaria cases. High-resolution drone imagery is a promising solution for capturing detailed roof information. However, it is challenging to extract the fine-grained details of individual objects from very high-resolution imagery as a single task. To tackle this problem, we introduced a dataset that can be used in three different tasks or try to solve the problem using novel methods. The three tasks we introduced with the dataset are semantic segmentation of roof area, instance segmentation of individual roofs, and classification of roof materials. These three tasks are closely related as low performance in one of these tasks can give bad results in the end. The best performance on this data would be accurately determining the roof area, separating individual buildings and classifying individual buildings. We also released our experimental results along with evaluation metrics for three tasks and the baseline model.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End paper abstract -->
-
-<hr>
-
-<section class="section hero is-light">
-
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">MMEarth Dataset</h2>
-        <div class="content has-text-justified">
-          <ul>
-            <li>MMEarth covers data from <b>1.2 million locations sampled globally</b>, making the optical image count similar to ImageNet-1K. At each
-              location, data from <b>12 aligned modalities</b> were collected and grouped into pixel-level and image-level modalities.
-            </li>
-            <li>MMEarth was <b>sampled uniformly across 14 biomes</b> (e.g., Mangroves, Temperate Conifer Forests, Tundra, etc.).
-              To increase diversity, we considered data from  <b>four years 2017–2020</b>.
-              Furthermore, we ensured that time-critical modalities were collected around the Sentinel-2 observation date, which serves as the reference. 
-            </li>
-            <li>The <b>six pixel-level modalities</b> represent raster data of size 128 × 128 pixels which capture 1.28 km × 1.28 km on the ground
-              (e.g., Sentinel-2, Sentinel-1, Aster DEM, Dynamic World, and ESA World Cover). The remaining <b>six image-level modalities</b> represent scalar values for each location
-              (e.g., Biome, Ecoregion, ERA5 temperature, ERA5 precipitation, Geolocation, and Sentinel-2 observation date). 
-            </li>
-            <li>
-              The data can be downloaded from [<a href="https://github.com/vishalned/MMEarth-data?tab=readme-ov-file#data-download" style="color:#3273dc;" target="_blank">here</a>].
-              In addition to the full MMEarth dataset, we provide two smaller "taster" versions (MMEarth64 and MMEarth100k) to facilitate research in multi-modal representation learning:
-              <!-- list of 3 data -->
-              <ul>
-                <li><b>MMEarth:</b> 1.2M locations with image size 128 × 128 pixels. [639GB]</li>
-                <li><b>MMEarth64:</b> 1.2M locations with center crops of 64 × 64 pixels. [163GB]</li>
-                <li><b>MMEarth100k:</b> 100k locations with image size 128 × 128 pixels. [48GB]</li>
-              </ul>
-            </li>
-            
-          </ul>
-
-        </div>
-        
-      </div>
-      
-    </div>
-    <h2 class="title is-5 has-text-centered" style="padding-top: 10px;">Temporal and Spatial distribution of the data</h2>
-    <div>
-    <div class="" style="width: fit-content;">
-      <img src="static/images/temporal_distribution.png" alt="temporal_distribution" style="width:40%; float: left; padding: 5px; margin-left: 0em;">
-      <!-- <figcaption style="width: fit-content; height:fit-content;">
-        Temporal Distribution
-      </figcaption> -->
-    </div>
-    <div class="">
-      <img src="static/images/spatial_distribution.png" alt="spatial_distribution" style="width:60%; float: right; padding: 5px; margin-right: -5em;">
-      <!-- <figcaption style="width: fit-content; height: fit-content; float: right; margin-right: -5em;" >
-        Spatial Distribution
-      </figcaption> -->
-    </div>
-    </div>
-    
-
-    
-  </div>
-
-  
-  
-</section>
-
-<hr>
-
-
-<section class="section hero">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Multi-Pretext Masked Autoencoder</h2>
-        <div class="content has-text-justified">
-          <!-- adding an image -->
-
-          <!-- some bullet points -->
-          <ul>
-            <li>Our Multi-Pretext Masked Autoencoder (MP-MAE) model, builds on masked image modelling with the ConvNeXt V2 architecture.
-              ConvNeXt V2 is a fully convolutional masked autoencoder (MAE) that uses sparse convolutions to predict the masked pixels of an image.
-            </li>
-            <li>MP-MAE extends ConvNeXt V2 by adding a task-specific decoder for each pretext task. The general-purpose representation is learned by combining the losses of all pretext tasks.
-          
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section hero">
-  <figure class="model-image">
-    <img src="static/images/model2.jpg" alt="MMEarth Model" >
-  </figure>
-  <!-- title -->
-  <!-- <h2 class="title is-3 has-text-centered">MMEarth Model</h2> -->
-</section>
-
-<hr>
-
-<!-- section for experimental results -->
-<section class="section hero is-light">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Experimental Results</h2>
-        <div class="content has-text-justified">
-          Our main results can be summarized as:
-          <ol type="1">
-            <li>Domain specific pretraining improves representations (i.e. pretraining on optical satellite images).
-              Multi-spectral input images improve over RGB channels.</li>
-              <li>Multi-modal pretext tasks improve representations for Sentinel-2 images - especially for linear probing as well as in low-data scenarios.</li>
-              <li>Our MP-MAE compares favourably to prior work on SSL for Earth observation data - even with a small encoder.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </div>
-  </section>
-  <section class="section hero is-light">
-    <figure class="model-image">
-      <img src="static/images/table_result_mp-mae2.png" alt="table results" style="width:50%">
-    </figure>
-  </section>
-  
-<hr>
-
-<!-- Image carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <!-- create a title that is centered -->
-      <h2 class="title is-3 has-text-centered">MMEarth examples</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-       <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel/img1.jpg" alt="MY ALT TEXT"/>
-        <!-- <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2> -->
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel/img2.jpg" alt="MY ALT TEXT"/>
-        <!-- <h2 cs -->
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel/img3.jpg" alt="MY ALT TEXT"/>
-        <!-- <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2> -->
-     </div>
-     <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/carousel/img4.jpg" alt="MY ALT TEXT"/>
-      <!-- <h2 class="subtitle has-text-centered">
-       Fourth image description.
-     </h2> -->
-   </div>
-   <div class="item">
-    <!-- Your image here -->
-    <img src="static/images/carousel/img5.jpg" alt="MY ALT TEXT"/>
-    <!-- <h2 class="subtitle has-text-centered">
-     Fourth image description.
-   </h2> -->
-    </div>
-     <!-- <div class="item"> -->
-      <!-- Your image here -->
-      <!-- <img src="static/images/carousel4.pdf" alt="MY ALT TEXT"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2> -->
-    <!-- </div> -->
-  </div>
-</div>
-</div>
-</section>
-<!-- End image carousel -->
-
-<hr>
-
-
-<!-- Youtube video -->
-<!-- <section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-<!-- End youtube video -->
-
-
-<!-- Video carousel -->
-<!-- <section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <video poster="" id="video1" autoplay controls muted loop height="100%">
-            <source src="static/videos/carousel1.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video2">
-          <video poster="" id="video2" autoplay controls muted loop height="100%">
-            <source src="static/videos/carousel2.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
-            <source src="static/videos/carousel3.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-<!-- End video carousel -->
-
-
-
-
-
-
-<!-- Paper poster -->
-<!-- <section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2>
-
-      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
-      </div>
-    </div>
-  </section> -->
-<!--End paper poster -->
-
-
-<!--BibTex citation -->
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <h2 class="title">Citation</h2>
-      Vishal Nedungadi, Ankit Kariryaa, Stefan Oehmcke, Serge Belongie, Christian Igel, & Nico Lang (2024). MMEarth: Exploring Multi-Modal Pretext Tasks For Geospatial Representation Learning.
-      <br><br>
-      <pre><code>@misc{nedungadi2024mmearth,
-      title={MMEarth: Exploring Multi-Modal Pretext Tasks For Geospatial Representation Learning},
-      author={Vishal Nedungadi and Ankit Kariryaa and Stefan Oehmcke and Serge Belongie and Christian Igel and Nico Lang},
-      year={2024},
-      eprint={2405.02771},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}</code></pre>
-    </div>
-</section>
-<!--End BibTex citation -->
-
-
-  <footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-
-          <p>
-            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-            You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- Statcounter tracking code -->
-  
-<!-- Default Statcounter code for Project Website
-https://vishalned.github.io/mmearth/ -->
+    <div id="app"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.4/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.4/umd/react-dom.development.js"></script>
 <script type="text/javascript">
-var sc_project=12996080; 
-var sc_invisible=1; 
-var sc_security="43c580c2"; 
+    const h = React.createElement;
+    // var sc_project = 12996080;
+    // var sc_invisible = 1;
+    // var sc_security = "43c580c2";
 </script>
-<script type="text/javascript"
-src="https://www.statcounter.com/counter/counter.js" async></script>
-<noscript><div class="statcounter"><a title="Web Analytics"
-href="https://statcounter.com/" target="_blank"><img class="statcounter"
-src="https://c.statcounter.com/12996080/0/43c580c2/1/" alt="Web Analytics"
-referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-<!-- End of Statcounter Code -->
+<!-- used to translate JSX to hyperscript, also new js version to old version-->
+<script src="https://unpkg.com/babel-standalone/babel.js"></script>
+<script src="js/authors.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/links.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/abstract.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/data.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/model.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/results.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/examples.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/citation.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/footer.js" type="text/jsx" data-presets="es2016, react"></script>
+<script src="js/app.js" type="text/jsx" data-presets="es2016, react"></script> 
 
-    <!-- End of Statcounter Code -->
+<script type="text/jsx" data-presets="es2016, react">
+    ReactDOM.render(<App />, document.getElementById("app"));
 
-  </body>
-  </html>
+</script>
+<script src="css/index.js" type="text/jsx" data-presets="es2016, react"></script>
+<!-- <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+<noscript>
+    <div class="statcounter"><a title="Web Analytics" href="https://statcounter.com/" target="_blank"><img
+                class="statcounter" src="https://c.statcounter.com/12996080/0/43c580c2/1/" alt="Web Analytics"
+                referrerPolicy="no-referrer-when-downgrade"></a></div>
+</noscript> -->
+
+</html>
