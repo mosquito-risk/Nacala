@@ -15,9 +15,9 @@ const App = () =>
         </section>
         <Abstract />
         <Data />
-        <Models />
+    {**   <Models />
         <Results />
         <Examples />
-        <Citation />
-        <Footer />
+        <Citation /> **}
+        <Footer /> 
     </div>;
