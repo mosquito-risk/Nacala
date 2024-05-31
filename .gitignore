@@ -5,6 +5,9 @@ __pycache__/
 
 # Python code
 .idea
+./datasets/sample/train/labels.cache
+./datasets/sample/yolo_binary/train/labels.cache
+
 # C extensions
 *.so
 
