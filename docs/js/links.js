@@ -1,8 +1,9 @@
 const LINKS = [
     {name: "Paper", link: "", icon: "fas fa-file-pdf"},
-    {name: "Code - Data", link: "https://github.com/mosquito-risk/Nacala", icon: "fab fa-github"},
-    {name: "Code - Model", link: "", icon: "fab fa-github"},
-    {name: "arXiv", link: "", icon: "ai ai-arxiv"}
+    {name: "Data", link: "https://sid.erda.dk/sharelink/aHw1Pey5BC", icon: "fa-solid fa-database"},
+    {name: "Models", link: "https://sid.erda.dk/sharelink/aHw1Pey5BC", icon: "fa-solid fa-file-zipper"},
+    {name: "Code", link: "https://github.com/mosquito-risk/Nacala", icon: "fab fa-github"},
+    // {name: "arXiv", link: "", icon: "ai ai-arxiv"}
 ]
 
 const Links = () => {

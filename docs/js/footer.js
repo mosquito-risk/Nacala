@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <footer class="footer hero is-white">
+        <footer class="footer hero is-light">
             <div class="container">
                 <div class="columns is-centered">
                     <div class="column is-8">
