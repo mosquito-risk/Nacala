@@ -1,0 +1,5 @@
+path: ./sample/yolo_binary/
+train: train/images
+val: train/images
+nc: 1
+names: ['buildings']
