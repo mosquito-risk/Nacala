@@ -33,7 +33,7 @@ placed and mask the building in the other set.
                                 </li>
                                 <li>
                                     The data can be downloaded from [<a
-                                        href="https://github.com/mosquito-risk/Nacala"
+                                        href="https://sid.erda.dk/sharelink/aHw1Pey5BC"
                                         style={{ color: "#3273dc" }} target="_blank">here</a>].
                                 </li>
 
