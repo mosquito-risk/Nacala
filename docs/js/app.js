@@ -5,7 +5,7 @@ const App = () =>
                 <div class="container is-max-desktop">
                     <div class="columns is-centered">
                         <div class="column has-text-centered">
-                            <h1 class="title is-1 publication-title">Nacala-Roof-Material: Drone Imagery for Roof Classification, Segmentation, and Counting to Support Mosquito-borne Disease Risk Assessment</h1>
+                            <h1 class="title is-1 publication-title">Nacala-Roof-Material: Drone Imagery for Roof Detection, Classification, and Segmentation to Support Mosquito-borne Disease Risk Assessment</h1>
                             <Authors />
                             <Links />
                         </div>
