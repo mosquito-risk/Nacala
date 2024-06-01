@@ -52,7 +52,7 @@ const Authors = () => {
                             {author.name}
                         </a>
                         <sup>{author.affiliation}</sup>
-                        {i < AUTHORS.length - 1 ? "," : ""}
+                        {i < AUTHORS.length - 1 ? ", " : ""}
                     </span>
                 ))}
             </span>
