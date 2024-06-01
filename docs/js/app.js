@@ -18,6 +18,6 @@ const App = () =>
     {/*   <Models />
         <Results />
         <Examples />
-        <Citation /> 
- <Footer /> */}
+        <Citation /> */}
+        <Footer /> 
     </div>;
