@@ -19,5 +19,5 @@ const App = () =>
         <Results />
         <Examples />
         <Citation /> */}
-        <Footer /> 
+{/* <Footer /> */}
     </div>;
