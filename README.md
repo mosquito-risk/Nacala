@@ -4,11 +4,11 @@
 The project homepage can be found here: [https://mosquito-risk.github.io/Nacala](https://mosquito-risk.github.io/Nacala/)
 
 ## Data
-All the data and trained models used in the paper can be accessed through this link: [Data and Models](https://sid.erda.dk/sharelink/aHw1Pey5BC).
-* The train, val and test sets are provided in `test.zip` and `train.zip` files. The `train.zip` file contains both `train` and `valid` sets.
-* The trained models are also provided and they can access from `models` folder in the above link
-* The data and models can be dowloaded directly going to the link or using `download.py` file
-* The below command is an example for downloading and extract the test set (for train set `--filename` is `train`) <br />
+All the data and trained models used in the correspoding paper can be accessed through this link: [Data and Models](https://sid.erda.dk/sharelink/aHw1Pey5BC).
+* The training, validation and test sets are provided in `test.zip` and `train.zip` files. The `train.zip` file contains both `train` and `valid` sets.
+* The trained models are also provided and can be accessed from the `models` folder in the above link
+* The data and models can be dowloaded directly by going to the link or using `download.py` file
+* The below command is an example for downloading and extracting the test set (for train set `--filename` is `train`) <br />
   ```python download.py --filename test --outdir ./datasets``` <br />
 
 
@@ -32,21 +32,20 @@ datasets                             # Data folder
 └───custom_dataset 
     └───(same as sample)
 ```
-The Nacala-Roof-Material provided in the same folder structure as above.
-The data provided as patches as well as raw data. The patches with all labels can be generated
+The Nacala-Roof-Material data are provided in the same folder structure as above.
+The data are provided as patches as well as raw data. The patches with all labels can be generated
 with the `patch_gen.py` script.
-The sample dataset provided in the `sample` folder.
+The sample datasets are provided in the `sample` folder.
 The sample can be used with all the scripts provided in the repository.
 The Nacala-Roof-Material dataset or custom dataset can be placing in datasets folder.
-All files in train, valid and test are in `*.tif` format except for YOLOv8 labels in `*.txt` format.
-The training python file for YOLOv8 access the required data from `*.yaml` format.
-The images and labels for test set provided in `*.tif` and `*.geojson` format, respectively.
+All files in `train`, `valid` and `test` are in `*.tif` format except for YOLOv8 labels in `*.txt` format.
+The training Python file for YOLOv8 accesses the required data in `*.yaml` format.
+The images and labels for the test set are provided in `*.tif` and `*.geojson` format, respectively.
 The evaluation script takes these files and returns all metrics.
 
 ## Code
-This repository contains the code for testing with all available models and
-training on sample or Nacala-Roof-Material by downloading it.
-The example commands provided for testing and training all models.
+This repository contains the code for training and testing the models considered in the correspoding resaerch paper.
+Example are provided for testing and training these models.
 
 ## Train and Evaluate Models
 
@@ -58,15 +57,15 @@ Create conda environment and install required packages. The provided package ver
 `pip install -r requirements.txt` <br>
 
 ### Evaluate Models
-Once the test set downloaded and extracted to the `datasets` folder,
-the pretrained models can be downloaded using same command and get metrics on test set.
-Two testing scripts provided in the repository. `pred_unet.py` for all segmentation models.
-and `pred_yolov8.py` for .
-All trained models can be accessed from [trained models](https://sid.erda.dk/sharelink/HF2srDrYEa).
+Once the test set is downloaded and extracted to the `datasets` folder,
+the pretrained models can be downloaded using same command, and perfromance metrics can be obtaied on the test set.
+Two testing scripts provided in the repository. `pred_unet.py` for all segmentation models
+and `pred_yolov8.py` for YOLOv8.
+All trained models can be accessed via [trained models](https://sid.erda.dk/sharelink/HF2srDrYEa).
 
 * Evaluate simple UNet: <br />
 To download UNet and classifier weights, use the following commands.
-The classifier is logistic regression model to classify each binary segment. <br>
+The classifier is logistic regression. <br>
 ```python download.py --filename unet1 --outdir ./temp/``` <br>
 ```python download.py --filename classifier --outdir ./temp/``` <br>
 ```python pred_unet.py --patch_size 4800 --use_dinov2cls --data_dir ./datasets/test/ --weights_folder ./temp/unet1/```
@@ -99,7 +98,7 @@ The classifier is logistic regression model to classify each binary segment. <br
 
 ### Training models
 `train_unet.py` is for training the simple UNet and `train_unet_2heads.py` is used to train the UNet with DOW.
-Following are example commands.
+For example:
 * Training simple UNet: <br />
 ```python train_unet.py --keyword test1 --val_folder train --out_dir temp --data_path ./datasets/sample/ --use_border_weight```
 * Training UNet<sub>Multi</sub>: <br />
@@ -121,7 +120,8 @@ Following are example commands.
 [//]: # (```python train_unet_2heads.py --keyword test5 --model_name unet_2decoders --val_folder train --label2_folder int_mask --out_dir temp --data_path ./datasets/sample/```)
 
 ### Notes
-1. To train YOLOv8 for binary labels of sample data, images folder has to be copied to the `datasets/sample/yolo_binary` directory.
-Same for the Nacala-Roof-Material or custom dataset.
+1. To train YOLOv8 for binary labels of sample data, the folder with images has to be copied to the `datasets/sample/yolo_binary` directory.
+Same for the Nacala-Roof-Material or a custom dataset.
 2. For reference, all file names that can be downloaded can find in the `download.py` file.
-3. The default arguments for evaluation and training scripts can find in respective python files.
+3. The default arguments for evaluation and training scripts can be found in the respective 
+Python files.
