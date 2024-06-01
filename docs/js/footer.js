@@ -5,7 +5,7 @@ const Footer = () => {
                 <div class="columns is-centered">
                     <div class="column is-8">
                         <div class="content">
-                            <p style="font-size: smaller">
+                            <p>
                                 This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
                                     target="_blank">Academic Project Page Template</a> which was adopted from the <a
                                         href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
