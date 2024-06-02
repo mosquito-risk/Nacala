@@ -7,6 +7,8 @@ __pycache__/
 .idea
 ./datasets/sample/train/labels.cache
 ./datasets/sample/yolo_binary/train/labels.cache
+./datasets/dinov2_features
+./temp
 
 # C extensions
 *.so
