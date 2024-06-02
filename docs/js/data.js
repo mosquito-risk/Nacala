@@ -7,22 +7,21 @@ const Data = () => {
                         <h2 class="title is-3">Nacala-Roof-Material Dataset</h2>
                         <div class="content has-text-justified">
                             <ul>
-                                <li>Nacala-Roof-Material covers very high resolution(≈ <b>4.4 cm</b>) drone imagery from three informal
-                                    settlements of Nacala in Mozambique, with manually verified, highly accurate annotations of building geometry and roof material.
+                                <li>The Nacala-Roof-Material data set provides very high resolution(≈ <b>4.4 cm</b>) drone imagery from three informal
+                                    settlements in Nacala in Mozambique, with manually verified, highly accurate annotations of building geometry and roof material.
                                 </li>
                                 <li>
-                                Aerial imagery was collected using a DJI Phantom 4 Pro drone and processed using AgiSoft Metashape software. All data was recorded between October and December 2021. We made all images available in <a href='https://openaerialmap.org/' style={{ color: "#3273dc" }} target="_blank">OpenAerialMap</a> with slightly decreased resolution.
+                                Aerial imagery was collected using a DJI Phantom 4 Pro drone and processed using AgiSoft Metashape software. All data were recorded between October and December 2021. All images were made available in <a href='https://openaerialmap.org/' style={{ color: "#3273dc" }} target="_blank">OpenAerialMap</a> with slightly decreased resolution.
                                 </li>
 
-                                <li>There are <b>17954 buildings</b> in the study area. We distinguished five major types of roof materials in
-                                    Nacala, namely <b>metal sheet, thatch, asbestos, concrete</b>, and <b>no-roof</b>, and their counts are 9776, 6428,
+                                <li>There were <b>17954 buildings</b> in the study area. We distinguished five major types of roof materials in
+                                    Nacala, namely <b>metal sheet, thatch, asbestos, concrete</b>, and <b>no-roof</b>, and their counts were 9776, 6428,
                                     566, 174, and 1010, respectively.
                                 </li>
-                                <li>Each building in this dataset is annotated with a polygon representing the building area and corresponding roof material class. Building polygons are exported from OpenStreetMap and manually verfied for geometry and attributes.
+                                <li>Each building in this dataset is annotated with a polygon representing the building area and corresponding roof material class. Building polygons were exported from OpenStreetMap and then manually verfied and corrected for geometry and attributes.
                                 </li>
                                 <li>
-                                    <b>Stratified sampling</b> was applied to the first two informal settlements to account for the class imbalance and achieve a similar class distribution in each data split. 
-                                    We prioritized the distribution of minority classes (i.e., concrete and asbestos)
+                                    For creating the training, validation, and first test data set, <b>stratified sampling</b> was applied to the datat from the first two informal settlements to account for the class imbalance and achieve a similar class distribution in each data split. 
                                 </li>
                                 <li>
                                     There is <b>no data leaking</b> between sets. If the building area falls into two grid cells and those two cells belong to two different sets (e.g.,
@@ -50,8 +49,8 @@ placed and mask the building in the other set.
                     <figure class="model-image">
                         <img src="images/data4.png" alt="dataset overview" style={{ width: "90%" }} />
                         <figcaption style={{ width: "fitContent", height: "fitContent" }}>
-                            Figure 1: (a) Visualisation of the train, validation and test sets with reference to longitude and latitude;<br />
-                            (b) Drone imagery with labels (c) Instance count of each class from all sets
+                            Figure 1: (a) Visualisation of the training, validation and test sets with reference to longitude and latitude;<br />
+                            (b) Drone imagery with labels; (c) Instance count of each class for all subsets.
                         </figcaption>
                     </figure>
                 </div>
