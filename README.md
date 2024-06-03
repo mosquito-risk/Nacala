@@ -6,7 +6,7 @@ The project homepage can be found here: [https://mosquito-risk.github.io/Nacala]
 ## Data
 All the data and trained models used in the correspoding paper can be accessed through this link: [Data and Models](https://sid.erda.dk/sharelink/aHw1Pey5BC).
 * The training, validation and test sets are provided in `test.zip` and `train.zip` files. The `train.zip` file contains both `train` and `valid` sets.
-* The trained models are also provided and can be accessed from the `models` folder in the above link
+* The trained models are also provided and can be accessed in the `models` folder in the same link
 * The data and models can be dowloaded directly by going to the link or using `download.py` file
 * The below command is an example for downloading and extracting the test set (for train set `--filename` is `train`) <br />
   ```python download.py --filename test --outdir ./datasets``` <br />
@@ -35,13 +35,15 @@ datasets                             # Data folder
 The Nacala-Roof-Material data are provided in the same folder structure as above.
 The data are provided as patches as well as raw data. The patches with all labels can be generated
 with the `patch_gen.py` script.
-The sample datasets are provided in the `sample` folder.
+The sample dataset provided in the `datasets/sample` folder.
 The sample can be used with all the scripts provided in the repository.
-The Nacala-Roof-Material dataset or custom dataset can be placing in datasets folder.
+The Nacala-Roof-Material dataset should be placed in the datasets folder at the same level as sample.
 All files in `train`, `valid` and `test` are in `*.tif` format except for YOLOv8 labels in `*.txt` format.
 The training Python file for YOLOv8 accesses the required data in `*.yaml` format.
 The images and labels for the test set are provided in `*.tif` and `*.geojson` format, respectively.
 The evaluation script takes these files and returns all metrics.
+
+Map data sourced from [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 ## Code
 This repository contains the code for training and testing the models considered in the correspoding resaerch paper.
