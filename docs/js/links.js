@@ -16,6 +16,7 @@ const Links = () => {
                         <span class="icon"><i class={link.icon}></i></span>
                         <span>{link.name}</span>
                     </a>
+                    &nbsp;
                 </span>
             ))}
         </div>
