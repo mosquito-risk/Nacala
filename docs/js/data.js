@@ -47,7 +47,7 @@ placed and mask the building in the other set.
                 </h2>
                 <div>
                     <figure class="model-image">
-                        <img src="images/data4.png" alt="dataset overview" style={{ width: "90%" }} />
+                        <img src="images/data5CI.png" alt="dataset overview" style={{ width: "90%" }} />
                         <figcaption style={{ width: "fitContent", height: "fitContent" }}>
                             Figure 1: (a) Visualisation of the training, validation and test sets with reference to longitude and latitude;<br />
                             (b) Drone imagery with labels; (c) Instance count of each class for all subsets.

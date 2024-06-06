@@ -6,12 +6,12 @@ const AUTHORS = [
     },
     {
         name: "Stefan Oehmcke",
-        affiliation: 1,
+        affiliation: 2,
         link: "https://scholar.google.de/citations?hl=en&user=k9EWJmcAAAAJ&view_op=list_works",
     },
     {
         name: "Remígio Chilaule",
-        affiliation: 2,
+        affiliation: [3,4],
         link: "https://scholar.google.com/citations?user=p58Vlu4AAAAJ&hl=en&oi=ao",
     },
     {
@@ -27,12 +27,12 @@ const AUTHORS = [
     {
         name: "Ankit Kariryaa",
         affiliation: 1,
-        link: "https://scholar.google.de/citations?hl=en&user=lwSTZGgAAAAJ&view_op=list_works&sortby=pubdate",
+        link: "https://ankitkariryaa.github.io/",
     },
     {
         name: "Johan Mottelson",
-        affiliation: 2,
-        link: "https://scholar.google.de/citations?user=uyvzvC0AAAAJ&hl=en&oi=ao",
+        affiliation: 3,
+        link: "http://mottelson.com/",
     },
     {
         name: "Christian Igel",
@@ -57,13 +57,21 @@ const Authors = () => {
                 ))}
             </span>
             <div class="is-size-5 publication-authors">
-                <span class="author-block">
+                <span className="author-block">
                     <sup>1</sup>
-                    <a href="https://di.ku.dk/english/" style={{ color: '#3273dc' }}>University of Copenhagen</a>,
+                    <a href="https://di.ku.dk/english/" style={{color: '#3273dc'}}>University of Copenhagen</a>,
                 </span>
-                <span class="author-block">
+                <span className="author-block">
                     <sup>2</sup>
-                    <a href="https://royaldanishacademy.com/en" style={{ color: '#3273dc' }}>Royal Danish Academy</a>
+                    <a href="https://www.uni-rostock.de/en/" style={{color: '#3273dc'}}>University of Rostock</a>,
+                </span>
+                <span className="author-block">
+                    <sup>3</sup>
+                    <a href="https://royaldanishacademy.com/en" style={{color: '#3273dc'}}>Royal Danish Academy</a>
+                </span>
+                <span className="author-block">
+                    <sup>4</sup>
+                    <a href="https://mapeandomeubairro.org/" style={{color: '#3273dc'}}>#MapeandoMeuBairro</a>
                 </span>
             </div>
         </div>
