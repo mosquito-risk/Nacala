@@ -15,15 +15,16 @@ from torchvision.datasets.utils import download_url, extract_archive
 # List of trained models
 trained_models = [
     "classifier",
-    "unet1", "unet2", "unet3", "unet4", "unet5",
-    "unet_m1", "unet_m2", "unet_m3", "unet_m4", "unet_m5",
-    "unet_e1", "unet_e2", "unet_e3", "unet_e4", "unet_e5",
-    "unet_2h1", "unet_2h2", "unet_2h3", "unet_2h4", "unet_2h5",
-    "unet_2h_m1", "unet_2h_m2", "unet_2h_m3", "unet_2h_m4", "unet_2h_m5",
-    "unet_2d1", "unet_2d2", "unet_2d3", "unet_2d4", "unet_2d5",
-    "yolo1", "yolo2", "yolo3", "yolo4", "yolo5",
-    "yolo_m1", "yolo_m2", "yolo_m3", "yolo_m4", "yolo_m5",
-    "dino_m1", "dino_m2", "dino_m3", "dino_m4", "dino_m5"
+    "yolo1", "yolo2", "yolo3", "yolo4", "yolo5",                                                          # YOLOv8
+    "dinov21", "dinov22", "dinov23", "dinov24", "dinov25",                                                # DINOv2
+    "dinov2_dow1", "dinov2_dow2", "dinov2_dow3", "dinov2_dow4", "dinov2_dow5",                            # DINOv2_DOW
+    "unet1", "unet2", "unet3", "unet4", "unet5",                                                          # UNet
+    "unet_dow1", "unet_dow2", "unet_dow3", "unet_dow4", "unet_dow5",                                      # UNet_DOW
+    "yolo_multi1", "yolo_multi2", "yolo_multi3", "yolo_multi4", "yolo_multi5",                            # YOLO_Multi
+    "dinov2_multi1", "dinov2_multi2", "dinov2_multi3", "dinov2_multi4", "dinov2_multi5",                  # DINOv2_Multi
+    "dinov2_dow_multi1", "dinov2_dow_multi2", "dinov2_dow_multi3", "dinov2_dow_multi4", "dinov2_dow_multi5",
+    "unet_multi1", "unet_multi2", "unet_multi3", "unet_multi4", "unet_multi5",                            # UNet_Multi
+    "unet_dow_multi1", "unet_dow_multi2", "unet_dow_multi3", "unet_dow_multi4", "unet_dow_multi5",     # UNet_DOW_Multi
 ]
 
 # List of available datasets

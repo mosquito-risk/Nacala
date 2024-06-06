@@ -52,7 +52,7 @@ Example are provided for testing and training these models.
 ## Train and Evaluate Models
 
 ### Installations
-Create conda environment and install required packages. The provided package version worked well in our device. <br>
+Create conda environment and install required packages. The provided package versions worked well in our device. <br>
 `conda create -n nacala python=3.10` <br>
 `conda activate nacala` <br>
 `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118` <br>
@@ -61,34 +61,36 @@ Create conda environment and install required packages. The provided package ver
 ### Evaluate Models
 Once the test set is downloaded and extracted to the `datasets` folder,
 the pretrained models can be downloaded using same command, and perfromance metrics can be obtaied on the test set.
-Two testing scripts provided in the repository. `pred_unet.py` for all segmentation models
+Two testing scripts provided in the repository. `pred_seg.py` for all segmentation models
 and `pred_yolov8.py` for YOLOv8.
 All trained models can be accessed via [trained models](https://sid.erda.dk/sharelink/HF2srDrYEa).
 
-* Evaluate simple UNet: <br />
+* Evaluate UNet: <br />
 To download UNet and classifier weights, use the following commands.
 The classifier is logistic regression. <br>
 ```python download.py --filename unet1 --outdir ./temp/``` <br>
 ```python download.py --filename classifier --outdir ./temp/``` <br>
-```python pred_unet.py --patch_size 4800 --use_dinov2cls --data_dir ./datasets/test/ --weights_folder ./temp/unet1/```
+```python pred_seg.py --patch_size 4800 --use_dinov2cls --data_dir ./datasets/test/ --weights_folder ./temp/unet1/```
 * Evaluate UNet<sub>Multi</sub>: <br>
-```python download.py --filename unet_m1 --outdir ./temp/``` <br>
-```python pred_unet.py --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_m1/ --num_classes 6``` <br>
-* Evaluate UNet<sub>DOW-6</sub>: <br>
-```python download.py --filename unet_e1 --outdir ./temp/``` <br>
-```python pred_unet.py --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_e1/ --num_classes 6 --use_dinov2cls --energy_levels --loss_type ordinal``` <br>
+```python download.py --filename unet_multi1 --outdir ./temp/``` <br>
+```python pred_seg.py --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_multi1/ --num_classes 6``` <br>
+
+[//]: # (* Evaluate UNet<sub>DOW-6</sub>: <br>)
+[//]: # (```python download.py --filename unet_e1 --outdir ./temp/``` <br>)
+[//]: # (```python pred_segpy --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_e1/ --num_classes 6 --use_dinov2cls --energy_levels --loss_type ordinal``` <br>)
+
 * Evaluate UNet<sub>DOW</sub>: <br>
-```python download.py --filename unet_2h1 --outdir ./temp/``` <br>
-```python pred_unet.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_2h1/ --use_dinov2cls``` <br>
+```python download.py --filename unet_dow1 --outdir ./temp/``` <br>
+```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow1/ --use_dinov2cls``` <br>
 * Evaluate UNet<sub>DOW-Multi</sub>: <br>
-```python download.py --filename unet_2h_m1 --outdir ./temp/``` <br>
-```python pred_unet.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_2h_m1/ --loss_type cross_entropy_cls``` <br>
+```python download.py --filename unet_dow_multi1 --outdir ./temp/``` <br>
+```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow_multi1/ --loss_type cross_entropy_cls``` <br>
 * Evaluate DINOv2: <br>
-```python download.py --filename dino_m1 --outdir ./temp/``` <br>
-```python pred_unet.py --model_name dinov2 --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/dino_m1/ --num_classes 6``` <br>
+```python download.py --filename dinov21 --outdir ./temp/``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/dinov21/ --num_classes 6``` <br>
 * Evaluate YOLOv8<sub>Multi</sub>: <br>
-```python download.py --filename yolo_m1 --outdir ./temp/``` <br>
-```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./temp/yolo_m1/``` <br>
+```python download.py --filename yolo_multi1 --outdir ./temp/``` <br>
+```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./temp/yolo_multi1/``` <br>
 * Evaluate YOLOv8: <br>
 ```python download.py --filename yolo1 --outdir ./temp/``` <br>
 ```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./temp/yolo1/ --use_dinov2cls``` <br>
@@ -102,17 +104,17 @@ The classifier is logistic regression. <br>
 `train_unet.py` is for training the simple UNet and `train_unet_2heads.py` is used to train the UNet with DOW.
 For example:
 * Training simple UNet: <br />
-```python train_unet.py --keyword test1 --val_folder train --out_dir temp --data_path ./datasets/sample/ --use_border_weight```
+```python train_seg.py --keyword test1 --val_folder train --out_dir temp --data_path ./datasets/sample/ --use_border_weight```
 * Training UNet<sub>Multi</sub>: <br />
-```python train_unet.py --keyword test2 --val_folder train --num_classes 3 --out_dir temp --data_path ./datasets/sample/ --use_border_weight```
+```python train_seg.py --keyword test2 --val_folder train --num_classes 3 --out_dir temp --data_path ./datasets/sample/ --use_border_weight```
 * Training UNet<sub>DOW-6</sub>: <br />
-```python train_unet.py --keyword test3 --val_folder train --num_classes 6 --out_dir temp --data_path ./datasets/sample/ --label_folder energy_mask --loss_type ordinal_cross_entropy```
+```python train_seg.py --keyword test3 --val_folder train --num_classes 6 --out_dir temp --data_path ./datasets/sample/ --label_folder energy_mask --loss_type ordinal_cross_entropy```
 * Training UNet<sub>DOW</sub>: <br />
-```python train_unet_2heads.py --keyword test4 --val_folder train --label2_folder int_mask --out_dir temp --data_path ./datasets/sample/```
+```python train_dow.py --keyword test4 --val_folder train --label2_folder int_mask --out_dir temp --data_path ./datasets/sample/```
 * Training UNet<sub>DOW-Multi</sub>: <br />
-```python train_unet_2heads.py --keyword test6 --model_name unet_2heads --val_folder train --label2_folder int_mask --out_dir temp --data_path ./datasets/sample/ --loss_type cross_entropy_cls```
+```python train_dow.py --keyword test6 --model_name unet_2heads --val_folder train --label2_folder int_mask --out_dir temp --data_path ./datasets/sample/ --loss_type cross_entropy_cls```
 * Training DINOv2: <br />
-```python train_unet.py --keyword test7 --model_name dinov2 --val_folder train --out_dir temp --data_path ./datasets/sample/ --num_classes 3```
+```python train_seg.py --keyword test7 --model_name dinov2 --val_folder train --out_dir temp --data_path ./datasets/sample/ --num_classes 3```
 * Training YOLOv8<sub>Multi</sub>: <br />
 ```python train_yolov8.py --keyword test8 --data_path ./datasets/sample/train/data.yaml```
 * Training YOLOv8: <br />
@@ -125,5 +127,5 @@ For example:
 1. To train YOLOv8 for binary labels of sample data, the folder with images has to be copied to the `datasets/sample/yolo_binary` directory.
 Same for the Nacala-Roof-Material or a custom dataset.
 2. For reference, all file names that can be downloaded can find in the `download.py` file.
-3. The default arguments for evaluation and training scripts can be found in the respective 
-Python files.
+3. The default arguments for evaluation and training scripts can be found in the respective Python files (e.g., `pred_seg.py`, `train_seg.py`).
+4. Please open the issue if you encounter any problems with the code or data.
