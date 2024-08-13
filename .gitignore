@@ -39,6 +39,10 @@ MANIFEST
 *.manifest
 *.spec
 
+# extra python files
+data.py
+table_acc.py
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

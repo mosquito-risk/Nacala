@@ -400,7 +400,8 @@ class FCNPredict(models_class.ModelsClass):
         mask2 = masks[1].numpy()
         class_array2 = np.argmax(mask2, axis=0).astype(np.uint8)
         score_array = np.amax(mask1, axis=0)
-        final_class_array = np.where(class_array2 == 0, class_array0, class_array2)
+        # final_class_array = np.where(class_array2 == 0, class_array0, class_array2)
+        final_class_array = class_array2
 
         if mask_decision == "both":
             class_array2_binary = (class_array2 > 0).astype(np.uint8)
@@ -427,7 +428,7 @@ class FCNPredict(models_class.ModelsClass):
         for idx, image in enumerate(self.image_list):
             meta = self.output_metadata(image)
             # predict image (if image is big then it required to implement with image_bounds)
-            if self.model_name == 'unet_2heads' or self.model_name == 'unet_2decoders' or 'dinov2_2heads':
+            if self.model_name == 'unet_2heads' or self.model_name == 'dinov2_2heads':
                 if self.loss_type == 'cross_entropy_cls':
                     class_array, score_array, label_array = self.predict_multi_output_cls(image,
                                                                                           mask_decision=self.mask_decision)
@@ -459,7 +460,7 @@ class FCNPredict(models_class.ModelsClass):
 
             gdf = self.vectorise_image(class_array, meta, binary_label=self.binary_label)
             print(f'Number of segments in the image: {len(gdf)}')
-            if self.loss_type == 'cross_entropy_cls':
+            if self.loss_type == 'cross_entropy_cls' or self.loss_type == 'cross_entropy_cls3':
                 polygons = [mapping(geom) for geom in gdf['geometry']]
                 stats = zonal_stats(polygons, label_array, affine=meta['transform'], stats='majority')
                 gdf['label'] = [stat['majority'] for stat in stats]
