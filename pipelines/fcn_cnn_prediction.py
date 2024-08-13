@@ -36,7 +36,8 @@ class FCNCNNPredict(fcn_prediction.FCNPredict):
     def predict_all_images(self):
         for idx, image_path in enumerate(self.image_list):
             # predict using multi head UNet models
-            if self.model_name == 'unet_2heads' or self.model_name == 'unet_2decoders':
+            if (self.model_name == 'unet_2heads' or self.model_name == 'unet_2decoders'
+                    or self.model_name == 'dinov2_2heads'):
                 class_array, score_array = self.predict_multi_output(image_path, mask_decision=self.mask_decision)
                 self.binary_label = True
             elif self.energy_levels:

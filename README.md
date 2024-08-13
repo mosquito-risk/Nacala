@@ -71,23 +71,35 @@ The classifier is logistic regression. <br>
 ```python download.py --filename unet1 --outdir ./temp/``` <br>
 ```python download.py --filename classifier --outdir ./temp/``` <br>
 ```python pred_seg.py --patch_size 4800 --use_dinov2cls --data_dir ./datasets/test/ --weights_folder ./temp/unet1/```
+
 * Evaluate UNet<sub>Multi</sub>: <br>
 ```python download.py --filename unet_multi1 --outdir ./temp/``` <br>
 ```python pred_seg.py --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_multi1/ --num_classes 6``` <br>
 
-[//]: # (* Evaluate UNet<sub>DOW-6</sub>: <br>)
-[//]: # (```python download.py --filename unet_e1 --outdir ./temp/``` <br>)
-[//]: # (```python pred_segpy --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_e1/ --num_classes 6 --use_dinov2cls --energy_levels --loss_type ordinal``` <br>)
-
 * Evaluate UNet<sub>DOW</sub>: <br>
 ```python download.py --filename unet_dow1 --outdir ./temp/``` <br>
 ```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow1/ --use_dinov2cls``` <br>
+
 * Evaluate UNet<sub>DOW-Multi</sub>: <br>
 ```python download.py --filename unet_dow_multi1 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow_multi1/ --loss_type cross_entropy_cls``` <br>
+```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow_multi1/ --loss_type cross_entropy_cls3 --num_classes 6``` <br>
+
 * Evaluate DINOv2: <br>
 ```python download.py --filename dinov21 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name dinov2 --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/dinov21/ --num_classes 6``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov21/ --num_classes 1``` <br>
+
+* Evaluate DINIv2<sub>Multi</sub>: <br>
+```python download.py --filename dinov2_multi1 --outdir ./temp/``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov2_multi1/ --num_classes 6``` <br>
+
+* Evaluate DINOv2<sub>DOW</sub>: <br>
+```python download.py --filename dinov2_dow1 --outdir ./temp/``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov2_dow1/ --num_classes 1 --use_dinov2cls``` <br>
+
+* Evaluate DINOv2<sub>DOW-Multi</sub>: <br>
+```python download.py --filename dinov2_dow_multi1 --outdir ./temp/``` <br>
+```python pred_seg.py --model_name dinov2_2heads --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov2_dow_multi1/ --loss_type cross_entropy_cls3 --num_classes 6``` <br>
+
 * Evaluate YOLOv8<sub>Multi</sub>: <br>
 ```python download.py --filename yolo_multi1 --outdir ./temp/``` <br>
 ```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./temp/yolo_multi1/``` <br>

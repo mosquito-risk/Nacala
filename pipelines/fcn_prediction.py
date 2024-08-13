@@ -373,6 +373,53 @@ class FCNPredict(models_class.ModelsClass):
 
         return class_array, score_array, class_array2
 
+    def predict_multi_output_cls3(self, image_fp, mask_decision="both"):
+        """
+        Predict image and return class and score arrays
+        :param image_fp: file path of the image
+        :param num_outputs: number of outputs from model
+        :param mask_decision: output decision "both" or "mask1" or "mask2"
+        "both" returs the final mask by taking mask as input of individual mask
+        "mask1" returns only mask1 and "mask2" returns only mask2
+        :return: class_array, score_array
+        """
+        class_list = [6, 6]
+        image_array, batch_pos, img_height, img_width = self.create_patch_array(image_fp)
+        masks = [torch.zeros((_, img_height, img_width), dtype=torch.float32, device='cpu')
+                 for _ in class_list]
+
+        for i in tqdm(range(0, len(image_array), self.pred_batch_size)):
+            X = torch.tensor(image_array[i:i + self.pred_batch_size]).float().to(self.device)
+            X_pos = batch_pos[i:i + self.pred_batch_size]
+            masks = self.predict_and_replace_multi_cls3(X, X_pos, masks, self.prediction_operator)
+
+        # class_array1 = masks[0].numpy().squeeze()
+        mask1 = masks[0].numpy()
+        class_array0 = np.argmax(mask1, axis=0).astype(np.uint8)
+        class_array1 = (class_array0 > 0).astype(np.uint8)
+        mask2 = masks[1].numpy()
+        class_array2 = np.argmax(mask2, axis=0).astype(np.uint8)
+        score_array = np.amax(mask1, axis=0)
+        final_class_array = np.where(class_array2 == 0, class_array0, class_array2)
+
+        if mask_decision == "both":
+            class_array2_binary = (class_array2 > 0).astype(np.uint8)
+            class_array = single_output_from_multihead(class_array1, class_array2_binary)
+
+        elif mask_decision == "both2":
+            print("Using both2")
+            class_array2_binary = (class_array2 > 0).astype(np.uint8)
+            class_array = single_output_from_multihead(class_array2_binary, class_array1)
+            final_label = np.zeros_like(class_array)
+            for i in range(1, np.unique(class_array).shape[0]):
+                segment_label = stats.mode(class_array2[(class_array == i) & (class_array2 != 0)]).mode
+                final_label = np.where(class_array == i, segment_label, final_label)
+
+        else:
+            raise ValueError(f"Invalid mask_decision: {mask_decision}")
+
+        return class_array, score_array, final_class_array
+
     def predict_all_images(self):
         # loop through all images
         self.image_list = self.base_class.create_image_list()
@@ -380,9 +427,13 @@ class FCNPredict(models_class.ModelsClass):
         for idx, image in enumerate(self.image_list):
             meta = self.output_metadata(image)
             # predict image (if image is big then it required to implement with image_bounds)
-            if self.model_name == 'unet_2heads' or self.model_name == 'unet_2decoders':
+            if self.model_name == 'unet_2heads' or self.model_name == 'unet_2decoders' or 'dinov2_2heads':
                 if self.loss_type == 'cross_entropy_cls':
-                    class_array, score_array, label_array = self.predict_multi_output_cls(image, mask_decision=self.mask_decision)
+                    class_array, score_array, label_array = self.predict_multi_output_cls(image,
+                                                                                          mask_decision=self.mask_decision)
+                if self.loss_type == 'cross_entropy_cls3':
+                    class_array, score_array, label_array = self.predict_multi_output_cls3(image,
+                                                                                           mask_decision=self.mask_decision)
                 else:
                     class_array, score_array = self.predict_multi_output(image, mask_decision="both")
                     self.binary_label = True

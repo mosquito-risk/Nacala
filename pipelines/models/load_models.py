@@ -3,7 +3,7 @@ List of models and optimizer to load
 """
 
 import torch
-from pipelines.models import dinov2_seg, unet_2heads, unet_2decoders
+from pipelines.models import dinov2_seg, unet_2heads, unet_2decoders, dinov2_seg_2heads
 from segmentation_models_pytorch import Unet
 
 
@@ -44,6 +44,15 @@ def load_model(model_name, device, channels=3, num_classes=2, pre_trained_weight
         for name, param in model.named_parameters():
             if name.startswith("dinov2"):
                 param.requires_grad = False
+    elif model_name == "dinov2_2heads":
+        id2label = list(range(num_classes))
+        model = dinov2_seg_2heads.Dinov2ForSemanticSegmentation.from_pretrained("facebook/dinov2-base",
+                                                                                id2label=id2label,
+                                                                                num_labels=num_classes)
+        for name, param in model.named_parameters():
+            if name.startswith("dinov2"):
+                param.requires_grad = False
+
     elif model_name == "unet_2heads":
         model = unet_2heads.Unet(in_channels=channels, classes=num_classes, encoder_name='resnet34',
                                  encoder_weights=encoder_weights, head_size=head_size, classes2=num_classes2)

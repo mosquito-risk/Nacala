@@ -89,7 +89,12 @@ class ModelsClass(base_class.BaseClass):
         Predict one batch of patches and add result to the output prediction.
         """
         tm = batch / 255
-        predictions = self.model.predict(tm)
+        if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
+            tm = F.interpolate(tm, size=(448, 448), mode='bilinear')
+            predictions = self.model(tm)
+            predictions = F.interpolate(predictions, size=(512, 512), mode='bilinear')
+        else:
+            predictions = self.model.predict(tm)
         # remove prediction in nodata areas
         channel_sum = torch.sum(batch, dim=1)  # Sum across channels
 
@@ -141,4 +146,32 @@ class ModelsClass(base_class.BaseClass):
             resultant = decision_tensor(sub_mask, p, operator)
             mask[:, row:row + he, col:col + wi] = resultant
         masks[1] = mask
+        return masks
+
+    def predict_and_replace_multi_cls3(self, batch, batch_pos, masks: list, operator):
+        """
+        Predict one batch of patches and add result to the output prediction.
+        """
+        tm = batch / 255
+        if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
+            tm = F.interpolate(tm, size=(448, 448), mode='bilinear')
+            predictions = self.model(tm)
+            predictions = F.interpolate(predictions, size=(512, 512), mode='bilinear')
+        else:
+            predictions = self.model.predict(tm)
+        # remove prediction in nodata areas
+        channel_sum = torch.sum(batch, dim=1)  # Sum across channels
+
+        for idx in range(2):
+            start, end = idx * 6, (idx + 1) * 6
+            pred = F.softmax(predictions[:, start:end, :, :], dim=1)
+            zero_mask = (channel_sum != 0).expand_as(pred)
+            pred = (pred * zero_mask).detach().cpu()
+            mask = masks[idx]
+            for i, (col, row, wi, he) in enumerate(batch_pos):
+                p = pred[i, :, :he, :wi]
+                sub_mask = mask[:, row:row + he, col:col + wi]
+                resultant = decision_tensor(sub_mask, p, operator)
+                mask[:, row:row + he, col:col + wi] = resultant
+            masks[idx] = mask
         return masks
