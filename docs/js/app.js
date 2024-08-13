@@ -17,7 +17,7 @@ const App = () =>
         <Data />
     {/*   <Models />
         <Results />
-        <Examples />
-        <Citation /> */}
+<Examples /> */}
+        <Citation />
         <Footer /> 
     </div>;

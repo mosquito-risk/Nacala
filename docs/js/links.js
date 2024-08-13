@@ -1,5 +1,5 @@
 const LINKS = [
-    {name: "Paper", link: "papers/NacalaRoofMaterial.pdf", icon: "fas fa-file-pdf"},
+    {name: "Paper", link: "https://arxiv.org/pdf/2406.04949", icon: "fas fa-file-pdf"},
     {name: "Datasheet", link: "papers/NacalaRoofMaterialDatasheet.pdf", icon: "fas fa-file-pdf"},
     {name: "Data", link: "https://sid.erda.dk/sharelink/aHw1Pey5BC", icon: "fa-solid fa-database"},
     {name: "Models", link: "https://sid.erda.dk/sharelink/aHw1Pey5BC", icon: "fa-solid fa-file-zipper"},
