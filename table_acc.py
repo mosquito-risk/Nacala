@@ -73,10 +73,13 @@ dino_h2_t1 = [dino_h2_t1_1, dino_h2_t1_2, dino_h2_t1_3, dino_h2_t1_4, dino_h2_t1
 dino_h3_t1 = [dino_h3_t1_1, dino_h3_t1_2, dino_h3_t1_3, dino_h3_t1_4, dino_h3_t1_5]
 
 # DINO DOW Head1 Test2
-
-
 # DINO DOW Head2 Test2
 # DINO DOW Head3 Test2
 
-estimate_metrics(dino_h2_t1)
+# UNet Multi Test1
+unet_t1 = [unet_t1_1, unet_t1_2, unet_t1_3, unet_t1_4, unet_t1_5]
+
+# DINO Multi Test1
+dino_t1 = [dino_t1_1, dino_t1_2, dino_t1_3, dino_t1_4, dino_t1_5]
+estimate_metrics(dino_t1)
 

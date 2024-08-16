@@ -403,10 +403,12 @@ class FCNPredict(models_class.ModelsClass):
         score_array = np.amax(mask1, axis=0)
         if self.label_from == 1:
             final_class_array = class_array0
-        if self.label_from == 2:
+        elif self.label_from == 2:
             final_class_array = class_array2
-        if self.label_from == 3:
+        elif self.label_from == 3:
             final_class_array = np.where(class_array2 == 0, class_array0, class_array2)
+        else:
+            raise ValueError(f"Invalid label_from: {self.label_from}")
 
         if mask_decision == "both":
             class_array2_binary = (class_array2 > 0).astype(np.uint8)
