@@ -28,7 +28,7 @@ class FCNPredict(models_class.ModelsClass):
                  pred_batch_size=1, num_classes=2, channels=3, out_dir=None, save_raster=False,
                  save_shapefile=True, keyword='test', classifier_path=None, dt_coco_path=None,
                  dt_geojson=None, energy_levels=False, mask_decision="both", head_size='n', loss_type=None,
-                 label_dir=None, use_dinov2cls=False):
+                 label_dir=None, use_dinov2cls=False, label_from=1):
         super().__init__(model_name=model_name)
         self.model = None
         self.image_list = None
@@ -60,6 +60,7 @@ class FCNPredict(models_class.ModelsClass):
         self.mask_decision = mask_decision
         self.head_size = head_size
         self.loss_type = loss_type
+        self.label_from = label_from
         self.use_dinov2cls = use_dinov2cls
         if dt_coco_path is None:
             self.dt_coco_path = os.path.join(self.out_dir, f'dt_coco_{self.keyword}.json')
@@ -400,8 +401,12 @@ class FCNPredict(models_class.ModelsClass):
         mask2 = masks[1].numpy()
         class_array2 = np.argmax(mask2, axis=0).astype(np.uint8)
         score_array = np.amax(mask1, axis=0)
-        # final_class_array = np.where(class_array2 == 0, class_array0, class_array2)
-        final_class_array = class_array2
+        if self.label_from == 1:
+            final_class_array = class_array0
+        if self.label_from == 2:
+            final_class_array = class_array2
+        if self.label_from == 3:
+            final_class_array = np.where(class_array2 == 0, class_array0, class_array2)
 
         if mask_decision == "both":
             class_array2_binary = (class_array2 > 0).astype(np.uint8)
@@ -462,9 +467,11 @@ class FCNPredict(models_class.ModelsClass):
             print(f'Number of segments in the image: {len(gdf)}')
             if self.loss_type == 'cross_entropy_cls' or self.loss_type == 'cross_entropy_cls3':
                 polygons = [mapping(geom) for geom in gdf['geometry']]
-                stats = zonal_stats(polygons, label_array, affine=meta['transform'], stats='majority')
+                stats = zonal_stats(polygons, label_array, affine=meta['transform'], stats='majority', nodata=0)
                 gdf['label'] = [stat['majority'] for stat in stats]
                 print(f'Added Label to polygons')
+            gdf['score'] = self.add_fcn_score_to_polys_v2(gdf, score_array, meta)
+            print(f'Added FCN Score to polygons')
             gdf['score'] = self.add_fcn_score_to_polys_v2(gdf, score_array, meta)
             print(f'Added FCN Score to polygons')
 

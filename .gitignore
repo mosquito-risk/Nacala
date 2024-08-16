@@ -40,8 +40,8 @@ MANIFEST
 *.spec
 
 # extra python files
-data.py
-table_acc.py
+#data.py
+#table_acc.py
 
 # Installer logs
 pip-log.txt

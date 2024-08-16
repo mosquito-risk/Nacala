@@ -64,7 +64,7 @@ def load_model(model_name, device, channels=3, num_classes=2, pre_trained_weight
     if pre_trained_weight is not None:
         model.load_state_dict(torch.load(pre_trained_weight, map_location=device))
 
-    return model.to(device)
+    return model.to(device).eval()
 
 
 def load_optimizer(optimizer_name, model, learning_rate, weight_decay=1e-4):

@@ -31,6 +31,8 @@ if __name__ == '__main__':
     parser.add_argument("--dt_geojson", type=str, help="Detected output from images", default=None)
     parser.add_argument("--num_classes", type=int, help="Number of classes in seg model", default=1)
     parser.add_argument("--patch_size", type=int, help="Patch size for prediction", default=4096)
+    parser.add_argument("--label_from", type=int, help="Leabel from is for multihead models 1) is for head1,"
+                                                       "2) is for head2 3) is for both heads", default=1)
     parser.add_argument("--stride_subtract", type=int, help="Overlap between patches in prediction",
                         default=128)
     parser.add_argument("--use_dinov2cls", action=argparse.BooleanOptionalAction,
@@ -53,6 +55,8 @@ if __name__ == '__main__':
     params['head_size'] = args.head_size
     params['loss_type'] = args.loss_type
     params['use_dinov2cls'] = args.use_dinov2cls
+    params['label_from'] = args.label_from
+
 
     params['image_dir'] = args.data_dir
     params['classifier_path'] = args.classifier_path
