@@ -73,13 +73,33 @@ dino_h2_t1 = [dino_h2_t1_1, dino_h2_t1_2, dino_h2_t1_3, dino_h2_t1_4, dino_h2_t1
 dino_h3_t1 = [dino_h3_t1_1, dino_h3_t1_2, dino_h3_t1_3, dino_h3_t1_4, dino_h3_t1_5]
 
 # DINO DOW Head1 Test2
+dino_h1_t2 = [dino_h1_t2_1, dino_h1_t2_2, dino_h1_t2_3, dino_h1_t2_4, dino_h1_t2_5]
 # DINO DOW Head2 Test2
+dino_h2_t2 = [dino_h2_t2_1, dino_h2_t2_2, dino_h2_t2_3, dino_h2_t2_4, dino_h2_t2_5]
 # DINO DOW Head3 Test2
+dino_h3_t2 = [dino_h3_t2_1, dino_h3_t2_2, dino_h3_t2_3, dino_h3_t2_4, dino_h3_t2_5]
 
 # UNet Multi Test1
 unet_t1 = [unet_t1_1, unet_t1_2, unet_t1_3, unet_t1_4, unet_t1_5]
 
 # DINO Multi Test1
 dino_t1 = [dino_t1_1, dino_t1_2, dino_t1_3, dino_t1_4, dino_t1_5]
-estimate_metrics(dino_t1)
+
+# UNet Multi Test2
+unet_t2 = [unet_t2_1, unet_t2_2, unet_t2_3, unet_t2_4, unet_t2_5]
+
+# DINO Multi Test2
+dino_t2 = [dino_t2_1, dino_t2_2, dino_t2_3, dino_t2_4, dino_t2_5]
+
+# UNet Binary Test1 and Test2
+unet_t1_b = [unet_t1_b1, unet_t1_b2, unet_t1_b3, unet_t1_b4, unet_t1_b5]
+unet_t2_b = [unet_t2_b1, unet_t2_b2, unet_t2_b3, unet_t2_b4, unet_t2_b5]
+
+# UNet DOW Binary Test1 and Test2
+unet_dow_t1_b = [unet_dow_t1_b1, unet_dow_t1_b2, unet_dow_t1_b3, unet_dow_t1_b4, unet_dow_t1_b5]
+unet_dow_t2_b = [unet_dow_t2_b1, unet_dow_t2_b2, unet_dow_t2_b3, unet_dow_t2_b4, unet_dow_t2_b5]
+
+# DINO Binary Test1 and Test2
+dino_t1_b = [dino_t1_b1, dino_t1_b2, dino_t1_b3, dino_t1_b4, dino_t1_b5]
+estimate_metrics(dino_t1_b)
 

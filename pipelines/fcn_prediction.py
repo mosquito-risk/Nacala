@@ -78,6 +78,8 @@ class FCNPredict(models_class.ModelsClass):
             self.model = load_model(self.model_name, self.device, channels=3, num_classes=self.num_classes,
                                     pre_trained_weight=self.weights_path, patch_size=self.patch_size,
                                     head_size=self.head_size, num_classes2=classes2)
+            if self.model.training:
+                raise ValueError("Model is in training mode. Please load a model in evaluation mode.")
 
     def load_classifier(self, classifier_path):
         with open(classifier_path, 'rb') as file:
@@ -492,3 +494,4 @@ class FCNPredict(models_class.ModelsClass):
         # save dataframes
         dt_final_gdf = gpd.GeoDataFrame(pd.concat(self.dataframes, ignore_index=True))
         dt_final_gdf.to_file(self.dt_geojson)
+

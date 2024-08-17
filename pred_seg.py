@@ -55,7 +55,6 @@ if __name__ == '__main__':
     params['head_size'] = args.head_size
     params['loss_type'] = args.loss_type
     params['use_dinov2cls'] = args.use_dinov2cls
-    params['label_from'] = args.label_from
 
 
     params['image_dir'] = args.data_dir
@@ -83,6 +82,7 @@ if __name__ == '__main__':
     if args.use_dinov2cls:
         predict_obj = fcn_cnn_prediction.FCNCNNPredict(**params)
     else:
+        params['label_from'] = args.label_from
         predict_obj = fcn_prediction.FCNPredict(**params)
     predict_obj.predict_all_images()
     end = time.time()

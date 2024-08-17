@@ -86,7 +86,7 @@ The classifier is logistic regression. <br>
 
 * Evaluate DINOv2: <br>
 ```python download.py --filename dinov21 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov21/ --num_classes 1``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov21/ --use_dinov2cls``` <br>
 
 * Evaluate DINIv2<sub>Multi</sub>: <br>
 ```python download.py --filename dinov2_multi1 --outdir ./temp/``` <br>
