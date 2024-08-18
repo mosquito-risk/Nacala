@@ -55,7 +55,7 @@ def load_dataset(image_paths, label1_paths, label2_paths, weight_paths=None, cha
                     _weight = src.read(1)
                 # _weight = np.where(_weight == 0, 0, 1)
                 _weight = np.expand_dims(_weight, axis=0).astype(np.uint8)
-                weights[i] = torch.tensor(_weight, dtype=torch.uint8)
+                    weights[i] = torch.tensor(_weight, dtype=torch.uint8)
 
         print(f"The memory size of the images is: {images.element_size() * images.nelement() / (1024 ** 3)} GB")
         print(f"The memory size of the labels is: {labels.element_size() * labels.nelement() / (1024 ** 3)} GB")

@@ -108,7 +108,12 @@ class TrainSegmentation:
         if self.load_data2memory:
             if self.tensordata_folder is not None and not os.path.exists(self.tensordata_folder):
                 create_folder(self.tensordata_folder)
+                print(f"Created tensor data folder: {self.tensordata_folder}")
             file_folder = os.path.join(self.tensordata_folder, set_type)
+            if not os.path.exists(file_folder):
+                create_folder(file_folder)
+                print(f"Created tensor data folder: {file_folder}")
+            import ipdb; ipdb.set_trace()
             data = tensor_datagen_2heads.TensorDataGenerator(image_paths, label1_paths, label2_paths,
                                                              weight_paths, batch_size=self.batch_size_train,
                                                              patch_size=self.patch_size,
@@ -177,7 +182,7 @@ class TrainSegmentation:
                     w = batch['w']
                 else:
                     w = None
-                if self.model_name == 'dinov2':
+                if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
                     X = F.interpolate(X, size=(448, 448), mode='bilinear')
                     y = F.interpolate(y.float(), size=(448, 448), mode='nearest').long()
                     w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()

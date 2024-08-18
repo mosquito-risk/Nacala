@@ -25,21 +25,10 @@ def ordinal_labels(y_true, num_classes):
 
 def estimate_loss(model_pred, ground_truth, model_name, weights=None, loss_type='cross_entropy',
                   num_classes=2, t_params: tuple = (0.7, 0.3, 1.0), smooth_factor=0.1):
-    """
-    This function estimates the loss based on model and loss types
-    :param model_pred: The model prediction
-    :param ground_truth: The gorund truth
-    :param model_name: Type of model used for training and getting predictions
-    :param weights: Weight mask for the loss
-    :param loss_type: The type of loss function: Should be from ['cross_entropy', 'tversky', 'ordinal_cross_entropy',
-    'ordinal_tversky']
-    :param num_classes: Number of classes in the dataset (for ordinal loss type, it should be number of energy levels)
-    :param t_params: The tuple of tversky loss parameters (alpha, beta, gamma)
-    :param smooth_factor: Smoothing factor for the ground truth (in case of cross entropy loss with label smoothing)
-    :return: total loss
-    """
     alpha, beta, gamma = t_params
-    if model_name == 'unet_2heads' or model_name == 'unet_2decoders':
+    weights = weights.squeeze(1) if weights is not None else None
+    if model_name == 'unet_2heads' or model_name == 'unet_2decoders' \
+            or model_name == 'dinov2_2heads':
         # Cross entropy loss
         if loss_type == 'cross_entropy':
             criterion = F.binary_cross_entropy_with_logits
@@ -64,7 +53,18 @@ def estimate_loss(model_pred, ground_truth, model_name, weights=None, loss_type=
                 loss2 = (loss2 * weights).sum().div((weights > 0).sum())
                 loss = (loss1 + loss2) / 2
             else:
-                loss = (loss1.mean() + loss2.mean())/2
+                loss = (loss1.mean() + loss2.mean()) / 2
+
+        elif loss_type == 'cross_entropy_cls3':
+            criterion = F.cross_entropy
+            loss1 = criterion(model_pred[:, :6, :], ground_truth[:, 0, :, :], reduction="none", label_smoothing=0.1)
+            loss2 = criterion(model_pred[:, 6:, :, :], ground_truth[:, 1, :, :], reduction="none", label_smoothing=0.1)
+            if weights is not None:
+                loss1 = (loss1 * weights).sum().div((weights > 0).sum())
+                loss2 = (loss2 * weights).sum().div((weights > 0).sum())
+                loss = (loss1 + loss2) / 2
+            else:
+                loss = (loss1.mean() + loss2.mean()) / 2
 
         # Tversky loss
         elif loss_type == 'tversky':
@@ -124,6 +124,17 @@ def estimate_loss(model_pred, ground_truth, model_name, weights=None, loss_type=
 
         else:
             raise NotImplementedError(f'Loss type {loss_type} is not implemented for {model_name}...')
+    elif model_name == 'only_detector':
+        if loss_type == 'cross_entropy':
+            criterion = F.binary_cross_entropy_with_logits
+            loss = criterion(model_pred, ground_truth.float(), reduction="none")
+
+            # weight mask to multiply binary mask with 300
+            weights = ground_truth * 300
+            if weights is not None:
+                loss = (loss * weights).sum().div((weights > 0).sum())
+            else:
+                loss = loss.mean()
 
     elif num_classes == 1:
         if loss_type == 'cross_entropy':
@@ -137,6 +148,7 @@ def estimate_loss(model_pred, ground_truth, model_name, weights=None, loss_type=
 
         # Tversky loss
         elif loss_type == 'tversky':
+            # criterion = TverskyLoss(mode='binary', alpha=alpha, beta=beta, smooth=1e-6, gamma=gamma)
             criterion = BinaryTverskyLoss(alpha=alpha, beta=beta, gamma=gamma)
             pred = torch.sigmoid(model_pred)
             if weights is not None:
