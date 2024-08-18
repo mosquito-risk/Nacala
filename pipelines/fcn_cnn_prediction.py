@@ -7,8 +7,6 @@ Code for
 5. Save COCO format results
 """
 
-import json
-import os
 import numpy as np
 import pandas as pd
 import geopandas as gpd

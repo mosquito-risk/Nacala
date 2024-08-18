@@ -101,5 +101,10 @@ unet_dow_t2_b = [unet_dow_t2_b1, unet_dow_t2_b2, unet_dow_t2_b3, unet_dow_t2_b4,
 
 # DINO Binary Test1 and Test2
 dino_t1_b = [dino_t1_b1, dino_t1_b2, dino_t1_b3, dino_t1_b4, dino_t1_b5]
-estimate_metrics(dino_t1_b)
+dino_t2_b = [dino_t2_b1, dino_t2_b2, dino_t2_b3, dino_t2_b4, dino_t2_b5]
+
+# UNet DOW Binary Test1 and Test2
+dino_dow_t1_b = [dino_dow_t1_b1, dino_dow_t1_b2, dino_dow_t1_b3, dino_dow_t1_b4, dino_dow_t1_b5]
+dino_dow_t2_b = [dino_dow_t2_b1, dino_dow_t2_b2, dino_dow_t2_b3, dino_dow_t2_b4, dino_dow_t2_b5]
+estimate_metrics(dino_dow_t2_b)
 

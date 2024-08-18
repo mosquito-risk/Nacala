@@ -32,7 +32,8 @@ class patch_gen:
                  yolo_labels: bool = False, yolo_binary=False, patch_labels: bool = False, label_attribute: str = None,
                  band_list=None, weight_mask=True, convert_attr=None, geojson_labels=False, data_per_thresh=0.8,
                  coco_category_dict='nacala', int_mask=False, energy_mask=False, level_dist=4,
-                 w0=10, sigma=5, write_images=True, inter_per=70, int_mask_euc=False, exterior_dist=5):
+                 w0=10, sigma=5, write_images=True, inter_per=70, int_mask_euc=False, exterior_dist=5,
+                 subset_info=None):
         self.image_dir = image_dir
         self.label_dir = label_dir
         self.image_format = image_format
@@ -98,6 +99,12 @@ class patch_gen:
             if self.yolo_binary:
                 self.yolo_binary_folder = os.path.join(self.out_folder, 'labels_binary')
                 create_folder(self.yolo_binary_folder)
+        if subset_info is not None:
+            self.subset_info = subset_info
+            _gdf = gpd.read_file(subset_info)
+            _gdf = _gdf[_gdf["scale_law"] == 1]
+            self.subset_files = _gdf["train_file"].tolist()
+            print(f'Number of subset files: {len(self.subset_files)}')
 
     def convert_attributes(self, label_df):
         # drop row with no label
@@ -193,9 +200,8 @@ class patch_gen:
                         gdal_transform = (patch_transform.c, patch_transform.a, patch_transform.b, patch_transform.f,
                                           patch_transform.d, patch_transform.e)
                         if patch_gdf.shape[0] > 0:
-                            ann_dict, start_ann_id = coco_annotation_dict(patch_gdf, self.label_attribute,
-                                                                          self.start_index, gdal_transform,
-                                                                          self.start_ann_id)
+                            ann_dict, start_ann_id = coco_annotation_dict(patch_gdf, self.start_index, gdal_transform,
+                                                                          self.label_attribute, self.start_ann_id)
                             self.final_annotation_dicts += ann_dict
                     # interior and exterior labels
                     if self.int_mask:
@@ -325,6 +331,9 @@ class patch_gen:
 
         for image_path, label_path in tqdm(zip(image_list, label_list), total=len(image_list), desc='Processing images',
                                            unit='image'):
+            if hasattr(self, 'subset_files'):
+                if os.path.basename(image_path) not in self.subset_files:
+                    continue
             self.patch_gen(image_path=image_path, label_path=label_path)
             print(f'Labels created for {image_path} and {label_path}')
 
