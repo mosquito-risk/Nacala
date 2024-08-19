@@ -34,7 +34,11 @@ class AccuracyMetrics:
             self.gt_df = gt_shapefile_path
         else:
             self.gt_df = gpd.read_file(gt_shapefile_path)
-        self.dt_df = gpd.read_file(det_shapefile_path)
+        if isinstance(det_shapefile_path, gpd.GeoDataFrame):
+            self.dt_df = det_shapefile_path
+        else:
+            self.dt_df = gpd.read_file(det_shapefile_path)
+        # self.dt_df = gpd.read_file(det_shapefile_path)
         self.gt_df = self.change_crs(self.gt_df, self.gt_src_crs, self.gt_dst_crs)
         self.dt_df = self.change_crs(self.dt_df, self.dt_src_crs, self.dt_dst_crs)
         self.dt_df = self.remove_small_objects(self.dt_df, self.noise_area)

@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     params['image_dir'] = args.data_dir
     params['classifier_path'] = args.classifier_path
-    params['weights_path'] = os.path.join(args.weights_folder, 'weights/best.pt')
+    params['weights_path'] = os.path.join(args.weights_folder, 'weights/iou_best.pt')
     params['out_dir'] = './temp'
 
     if args.dt_geojson is None:
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     noise_area = 1
     acc_classes = 5
     acc_object = accuracy_metrics.AccuracyMetrics(gt_shapefile_path=df,
-                                                  det_shapefile_path=params['dt_geojson'],
+                                                  det_shapefile_path=dt_shp,
                                                   noise_area=noise_area,
                                                   gt_class_attr="mater_id",
                                                   num_classes=acc_classes)
