@@ -2022,7 +2022,6 @@ dino_dow_t1_m5 = {
 }
 
 # DINO DOW Binary on 80p data Test1
-
 dino_dow_t1_b1 = {
     "iou": 0.878917609165227,
     "ap50": 0.934843190973679,
