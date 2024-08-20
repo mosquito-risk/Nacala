@@ -28,7 +28,7 @@ trained_models = [
 ]
 
 # List of available datasets
-datasets = ["train", "test", "raw_data", "dinov2_features"]
+datasets = ["train", "test", "test2", "raw_data", "dinov2_features"]
 
 
 def download_data(dataset_name: str, outdir: str):
