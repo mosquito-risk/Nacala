@@ -109,10 +109,18 @@ yolo_t2_m = [yolo_t2_m1, yolo_t2_m2, yolo_t2_m3, yolo_t2_m4, yolo_t2_m5]
 unet_t1_m = [unet_t1_m1, unet_t1_m2, unet_t1_m3, unet_t1_m4, unet_t1_m5]
 unet_t2_m = [unet_t2_m1, unet_t2_m2, unet_t2_m3, unet_t2_m4, unet_t2_m5]
 
-# UNet DOW Multi Test1 and Test2
+# DINOv2 Multi Test1 and Test2
+dino_t1_m = [dino_t1_m1, dino_t1_m2, dino_t1_m3, dino_t1_m4, dino_t1_m5]
+dino_t2_m = [dino_t2_m1, dino_t2_m2, dino_t2_m3, dino_t2_m4, dino_t2_m5]
+
+# DINOv2 DOW Multi Test1 and Test2
+dino_dow_t1_m = [dino_dow_t1_m1, dino_dow_t1_m2, dino_dow_t1_m3, dino_dow_t1_m4, dino_dow_t1_m5]
+dino_dow_t2_m = [dino_dow_t2_m1, dino_dow_t2_m2, dino_dow_t2_m3, dino_dow_t2_m4, dino_dow_t2_m5]
+
+
+# # UNet DOW Multi Test1 and Test2
 unet_dow_t1_m = [unet_dow_t1_m1, unet_dow_t1_m2, unet_dow_t1_m3, unet_dow_t1_m4, unet_dow_t1_m5]
 unet_dow_t2_m = [unet_dow_t2_m1, unet_dow_t2_m2, unet_dow_t2_m3, unet_dow_t2_m4, unet_dow_t2_m5]
 
-
-estimate_metrics(unet_t2_m)
+estimate_metrics(yolo_t2_b)
 

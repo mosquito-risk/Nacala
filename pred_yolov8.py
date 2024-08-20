@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser.add_argument("--stride_subtract", type=int, help="patch_size", default=128)
     parser.add_argument("--use_dinov2cls", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--classifier_path", type=str, help="Classifier trained on DINOv2 features",
-                        default="./temp/classifier/logistic_model.pkl")
+                        default="./temp/classifier/subset80p_model.pkl")
     parser.add_argument("--weights_folder", type=str, help="Model weights directory",
                         default="./temp/yolo1/")
     args = parser.parse_args()

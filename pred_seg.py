@@ -25,7 +25,7 @@ if __name__ == '__main__':
     parser.add_argument("--weights_folder", type=str, help="Model weights directory",
                         default="./temp/unet1/")
     parser.add_argument("--classifier_path", type=str, help="Classifier trained on DINOv2 features",
-                        default="./temp/classifier/logistic_model.pkl")
+                        default="./temp/classifier/subset80p_model.pkl")
     parser.add_argument("--mask_decision", type=str, help="mask decision for multi head unet",
                         default="both")
     parser.add_argument("--dt_geojson", type=str, help="Detected output from images", default=None)
