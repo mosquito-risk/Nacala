@@ -43,6 +43,8 @@ if __name__ == '__main__':
 
     params['image_dir'] = args.data_dir
     params['classifier_path'] = args.classifier_path
+    if not os.path.exists(args.weights_folder):
+        os.system(f"unzip {args.weights_folder}.zip, -d {args.weights_folder}")
     params['weights_path'] = os.path.join(args.weights_folder, 'weights/iou_best.pt')
     params['out_dir'] = './temp'
 

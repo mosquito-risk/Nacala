@@ -23,9 +23,9 @@ if __name__ == '__main__':
     parser.add_argument("--data_dir", type=str, help="Data directory for predictions",
                         default="./datasets/sample/test/")
     parser.add_argument("--weights_folder", type=str, help="Model weights directory",
-                        default="./temp/unet1/")
+                        default="./models/unet1/")
     parser.add_argument("--classifier_path", type=str, help="Classifier trained on DINOv2 features",
-                        default="./temp/classifier/subset80p_model.pkl")
+                        default="./models/logistic_model.pkl")
     parser.add_argument("--mask_decision", type=str, help="mask decision for multi head unet",
                         default="both")
     parser.add_argument("--dt_geojson", type=str, help="Detected output from images", default=None)
@@ -59,6 +59,9 @@ if __name__ == '__main__':
 
     params['image_dir'] = args.data_dir
     params['classifier_path'] = args.classifier_path
+    # if weights path is not exist consider the folder as zip file by concatenating .zip then extract
+    if not os.path.exists(args.weights_folder):
+        os.system(f"unzip {args.weights_folder}.zip, -d {args.weights_folder}")
     params['weights_path'] = os.path.join(args.weights_folder, 'best_model')
     params['out_dir'] = './temp'
 

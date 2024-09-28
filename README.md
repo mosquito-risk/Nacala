@@ -1,17 +1,14 @@
 # Nacala
 ## Nacala-Roof-Material: Drone Imagery for Roof Classification, Segmentation, and Counting to Support Mosquito-borne Disease Risk Assessment
 
-The project homepage can be found here: [https://mosquito-risk.github.io/Nacala](https://mosquito-risk.github.io/Nacala/)
-
 ## Data
-All the data and trained models used in the correspoding paper can be accessed through this link: [Data and Models](https://sid.erda.dk/sharelink/aHw1Pey5BC).
-* The training, validation and test sets are provided in `test.zip` and `train.zip` files. The `train.zip` file contains both `train` and `valid` sets.
-* The trained models are also provided and can be accessed in the `models` folder in the same link
-* The data and models can be dowloaded directly by going to the link or using `download.py` file
-* The below command is an example for downloading and extracting the test set (for train set `--filename` is `train`) <br />
-  ```python download.py --filename test --outdir ./datasets``` <br />
+All the data and trained models used in the paper are provided in this zipfile.
+* The training, validation and test sets are provided in  `train.zip` and `test.zip` files. The `train.zip` file contains both `train` and `validation` sets.
+* The second test set (external test set) provided in `test2.zip` file.
+* The trained models are also provided and can be accessed from `models` folder.
+* The DINOv2 features are provided in `dinov2_features.zip` folder
 
-
+* The Nacala-Roof-Material data are provided in the folder structure as below.
 ### Folder structure
 ```
 datasets                             # Data folder
@@ -32,21 +29,21 @@ datasets                             # Data folder
 └───custom_dataset 
     └───(same as sample)
 ```
-The Nacala-Roof-Material data are provided in the same folder structure as above.
-The data are provided as patches as well as raw data. The patches with all labels can be generated
-with the `patch_gen.py` script.
-The sample dataset provided in the `datasets/sample` folder.
-The sample can be used with all the scripts provided in the repository.
-The Nacala-Roof-Material dataset should be placed in the datasets folder at the same level as sample.
-All files in `train`, `valid` and `test` are in `*.tif` format except for YOLOv8 labels in `*.txt` format.
-The training Python file for YOLOv8 accesses the required data in `*.yaml` format.
-The images and labels for the test set are provided in `*.tif` and `*.geojson` format, respectively.
-The evaluation script takes these files and returns all metrics.
-
+* The sample datasets are provided in the `sample` folder, that is placed inside `code/datasets` folder.
+* The sample can be used with all the scripts provided in the repository.
+* The Nacala-Roof-Material dataset should be placed inside `datasets` folder at the same level as sample dataset.
+* All files in `train`, `valid` and `test` are in `*.tif` format except for YOLOv8 labels in `*.txt` format.
+* The training Python file for YOLOv8 accesses the required data in `*.yaml` format.
+* The images and labels for the test set are provided in `*.tif` and `*.geojson` format, respectively.
+* The evaluation script takes these files and returns all metrics.
 Map data sourced from [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
+## Prepare data before using the code
+* Before running the scripts, the Nacala-Roof-Material data (`train.zip`, `test.zip`, `test2.zip`) should be placed in the `code/datasets/nacala` folder and extract them.
+* Place `models` folder also inside `datasets` folder.
+
 ## Code
-This repository contains the code for training and testing the models considered in the correspoding resaerch paper.
+All python scripts provided in code folder, for training and testing the models considered in the correspoding resaerch paper.
 Example are provided for testing and training these models.
 
 ## Train and Evaluate Models
@@ -56,65 +53,50 @@ Create conda environment and install required packages. The provided package ver
 `conda create -n nacala python=3.10` <br>
 `conda activate nacala` <br>
 `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118` <br>
+`cd code` <br>
 `pip install -r requirements.txt` <br>
 
 ### Evaluate Models
-Once the test set is downloaded and extracted to the `datasets` folder,
-the pretrained models can be downloaded using same command, and perfromance metrics can be obtaied on the test set.
-Two testing scripts provided in the repository. `pred_seg.py` for all segmentation models
-and `pred_yolov8.py` for YOLOv8.
-All trained models can be accessed via [trained models](https://sid.erda.dk/sharelink/HF2srDrYEa).
+Once the test set placed and extracted ino the `datasets` folder, perfromance metrics can be obtaied on the test set.
 
+Two testing scripts provided in the repository. `pred_seg.py` for all segmentation models and `pred_yolov8.py` for YOLOv8.
+
+#### Examples
 * Evaluate UNet: <br />
-To download UNet and classifier weights, use the following commands.
-The classifier is logistic regression. <br>
-```python download.py --filename unet1 --outdir ./temp/``` <br>
-```python download.py --filename classifier --outdir ./temp/``` <br>
-```python pred_seg.py --patch_size 4800 --use_dinov2cls --data_dir ./datasets/test/ --weights_folder ./temp/unet1/```
+```python pred_seg.py --patch_size 4800 --use_dinov2cls --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/unet1/```
 
 * Evaluate UNet<sub>Multi</sub>: <br>
-```python download.py --filename unet_multi1 --outdir ./temp/``` <br>
-```python pred_seg.py --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_multi1/ --num_classes 6``` <br>
+```python pred_seg.py --patch_size 4800 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/unet_multi1/ --num_classes 6``` <br>
 
 * Evaluate UNet<sub>DOW</sub>: <br>
-```python download.py --filename unet_dow1 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow1/ --use_dinov2cls``` <br>
+```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/unet_dow1/ --use_dinov2cls``` <br>
 
 * Evaluate UNet<sub>DOW-Multi</sub>: <br>
-```python download.py --filename unet_dow_multi1 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_dow_multi1/ --loss_type cross_entropy_cls3 --num_classes 6``` <br>
+```python pred_seg.py --model_name unet_2heads --patch_size 4800 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/unet_dow_multi1/ --loss_type cross_entropy_cls3 --num_classes 6``` <br>
 
 * Evaluate DINOv2: <br>
-```python download.py --filename dinov21 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov21/ --use_dinov2cls``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/dinov21/ --use_dinov2cls``` <br>
 
 * Evaluate DINIv2<sub>Multi</sub>: <br>
-```python download.py --filename dinov2_multi1 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov2_multi1/ --num_classes 6``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/dinov2_multi1/ --num_classes 6``` <br>
 
 * Evaluate DINOv2<sub>DOW</sub>: <br>
-```python download.py --filename dinov2_dow1 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov2_dow1/ --num_classes 1 --use_dinov2cls``` <br>
+```python pred_seg.py --model_name dinov2 --patch_size 512 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/dinov2_dow1/ --num_classes 1 --use_dinov2cls``` <br>
 
 * Evaluate DINOv2<sub>DOW-Multi</sub>: <br>
-```python download.py --filename dinov2_dow_multi1 --outdir ./temp/``` <br>
-```python pred_seg.py --model_name dinov2_2heads --patch_size 512 --data_dir ./datasets/test/ --weights_folder ./temp/dinov2_dow_multi1/ --loss_type cross_entropy_cls3 --num_classes 6``` <br>
+```python pred_seg.py --model_name dinov2_2heads --patch_size 512 --data_dir ./datasets/nacala/test/ --weights_folder ./datasets/models/dinov2_dow_multi1/ --loss_type cross_entropy_cls3 --num_classes 6``` <br>
 
 * Evaluate YOLOv8<sub>Multi</sub>: <br>
-```python download.py --filename yolo_multi1 --outdir ./temp/``` <br>
-```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./temp/yolo_multi1/``` <br>
-* Evaluate YOLOv8: <br>
-```python download.py --filename yolo1 --outdir ./temp/``` <br>
-```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./temp/yolo1/ --use_dinov2cls``` <br>
+```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./datasets/nacala/models/yolo_multi1/``` <br>
 
-[//]: # (* Evaluate UNet<sub>2decoders</sub>: <br>)
-[//]: # (```python download.py --filename unet_2d1 --outdir ./temp/``` <br>)
-[//]: # (```python pred_unet.py --model_name unet_2decoders --patch_size 4800 --data_dir ./datasets/test/ --weights_folder ./temp/unet_2d1/ --use_dinov2cls``` <br>)
+* Evaluate YOLOv8: <br>
+```python pred_yolov8.py --data_dir ./datasets/test/ --weights_folder ./datasets/nacala/models/yolo1/ --use_dinov2cls``` <br>
 
 
 ### Training models
-`train_unet.py` is for training the simple UNet and `train_unet_2heads.py` is used to train the UNet with DOW.
-For example:
+`train_seg.py` is for training the simple UNet/DINOv2 and `train_dow.py` is used to train the UNet/DINOv2 with DOW.
+
+Examples:
 * Training simple UNet: <br />
 ```python train_seg.py --keyword test1 --val_folder train --out_dir temp --data_path ./datasets/sample/ --use_border_weight```
 * Training UNet<sub>Multi</sub>: <br />
@@ -131,9 +113,6 @@ For example:
 ```python train_yolov8.py --keyword test8 --data_path ./datasets/sample/train/data.yaml```
 * Training YOLOv8: <br />
 ```python train_yolov8.py --keyword test9 --data_path ./datasets/sample/yolo_binary/data.yaml```
-
-[//]: # (* Training UNet<sub>2decoders</sub>: <br />)
-[//]: # (```python train_unet_2heads.py --keyword test5 --model_name unet_2decoders --val_folder train --label2_folder int_mask --out_dir temp --data_path ./datasets/sample/```)
 
 ### Notes
 1. To train YOLOv8 for binary labels of sample data, the folder with images has to be copied to the `datasets/sample/yolo_binary` directory.
