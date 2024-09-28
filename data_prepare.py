@@ -6,7 +6,7 @@ from pipelines import patchgen_fcn_object
 params = {
     'image_dir': '/scratch/project_465001005/projects/nacala_dataset/grid_data/train/',
     'label_dir': '/scratch/project_465001005/projects/nacala_dataset/grid_data/train/',
-    'out_folder': '/scratch/project_465001005/projects/nacala/rebuttal_dir/80p_data',
+    'out_folder': '/scratch/project_465001005/projects/nacala/rebuttal_dir/20p_data',
     'patch_size': 512,
     'overlap': 0,
     'label_attribute': 'mater_id',
@@ -28,7 +28,7 @@ params = {
     'sigma': 5,
     'label_format': 'geojson',
     'data_per_thresh': 0.4,
-    'subset_info': '../data/nacala_dataset/raw_data/scaling_law2.shp'
+    'subset_info': '../data/nacala_dataset/raw_data/scaling_files/scaling_law20p.shp'
 }
 
 # save params as json

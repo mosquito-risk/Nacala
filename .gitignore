@@ -26,6 +26,7 @@ lib64/
 parts/
 sdist/
 var/
+datasets/test2
 wheels/
 share/python-wheels/
 *.egg-info/

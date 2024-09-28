@@ -187,11 +187,6 @@ def interior_polygons_with_euc(gdf, height=None, width=None, transform=None, ext
             mask_euc = np.maximum(mask_euc, distance_mask)
             org_mask = np.maximum(org_mask, mask)
     # int_mask = np.where(mask_euc > exterior_dist, 1, 0).astype(np.uint8)
-    # fig, axs = plt.subplots(1, 3, figsize=(100, 50))
-    # axs[0].imshow(mask_euc)
-    # axs[1].imshow(org_mask)
-    # axs[2].imshow(int_mask)
-    # plt.show()
     return mask_euc
 
 
