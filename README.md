@@ -2,13 +2,13 @@
 ## Nacala-Roof-Material: Drone Imagery for Roof Classification, Segmentation, and Counting to Support Mosquito-borne Disease Risk Assessment
 
 ## Data
-All the data and trained models used in the paper are provided in this zipfile.
+* All the data and trained models used in the paper are provided in this zipfile.
 * The training, validation and test sets are provided in  `train.zip` and `test.zip` files. The `train.zip` file contains both `train` and `validation` sets.
 * The second test set (external test set) provided in `test2.zip` file.
 * The trained models are also provided and can be accessed from `models` folder.
-* The DINOv2 features are provided in `dinov2_features.zip` folder
+* The DINOv2 features are provided in `dinov2_features.zip` file.
 
-* The Nacala-Roof-Material data are provided in the folder structure as below.
+* The Nacala-Roof-Material data are provided in the below folder structure format.
 ### Folder structure
 ```
 datasets                             # Data folder
@@ -30,23 +30,23 @@ datasets                             # Data folder
     └───(same as sample)
 ```
 * The sample datasets are provided in the `sample` folder, that is placed inside `code/datasets` folder.
-* The sample can be used with all the scripts provided in the repository.
+* So all the Python scripts provided in the `code` folder.
+* The sample can be used with all the scripts provided in the `code` folder.
 * The Nacala-Roof-Material dataset should be placed inside `datasets` folder at the same level as sample dataset.
 * All files in `train`, `valid` and `test` are in `*.tif` format except for YOLOv8 labels in `*.txt` format.
 * The training Python file for YOLOv8 accesses the required data in `*.yaml` format.
 * The images and labels for the test set are provided in `*.tif` and `*.geojson` format, respectively.
 * The evaluation script takes these files and returns all metrics.
-Map data sourced from [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 ## Prepare data before using the code
 * Before running the scripts, the Nacala-Roof-Material data (`train.zip`, `test.zip`, `test2.zip`) should be placed in the `code/datasets/nacala` folder and extract them.
-* Place `models` folder also inside `datasets` folder.
+* Place `models` folder inside `datasets` folder.
 
 ## Code
-All python scripts provided in code folder, for training and testing the models considered in the correspoding resaerch paper.
+All Python scripts provided in `code` folder, for training and testing the models considered in the correspoding resaerch paper.
 Example are provided for testing and training these models.
 
-## Train and Evaluate Models
+## Test and Train Models
 
 ### Installations
 Create conda environment and install required packages. The provided package versions worked well in our device. <br>
@@ -56,8 +56,8 @@ Create conda environment and install required packages. The provided package ver
 `cd code` <br>
 `pip install -r requirements.txt` <br>
 
-### Evaluate Models
-Once the test set placed and extracted ino the `datasets` folder, perfromance metrics can be obtaied on the test set.
+### Test Models
+Once the test set placed and extracted into the `datasets/nacala` folder, performance metrics can be obtained on the test set.
 
 Two testing scripts provided in the repository. `pred_seg.py` for all segmentation models and `pred_yolov8.py` for YOLOv8.
 
@@ -117,6 +117,5 @@ Examples:
 ### Notes
 1. To train YOLOv8 for binary labels of sample data, the folder with images has to be copied to the `datasets/sample/yolo_binary` directory.
 Same for the Nacala-Roof-Material or a custom dataset.
-2. For reference, all file names that can be downloaded can find in the `download.py` file.
+2. Each method trained five times, so all these five pre-trained models are provided in the `models` folder.
 3. The default arguments for evaluation and training scripts can be found in the respective Python files (e.g., `pred_seg.py`, `train_seg.py`).
-4. Please open the issue if you encounter any problems with the code or data.
