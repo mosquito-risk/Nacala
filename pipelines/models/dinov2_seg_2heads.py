@@ -43,6 +43,7 @@ class LinearClassifier(torch.nn.Module):
         )
 
     def forward(self, embeddings):
+        # import ipdb; ipdb.set_trace()
         embeddings = embeddings.reshape(-1, self.height, self.width, self.in_channels)
         embeddings = embeddings.permute(0, 3, 1, 2)
 

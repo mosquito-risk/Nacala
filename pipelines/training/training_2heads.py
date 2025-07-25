@@ -251,7 +251,7 @@ class TrainSegmentation:
                 else:
                     w = None
                 with torch.no_grad():
-                    if self.model_name == 'dinov2':
+                    if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
                         X = F.interpolate(X, size=(448, 448), mode='bilinear')
                         y_ = F.interpolate(y_.float(), size=(448, 448), mode='nearest').long()
                         w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()
