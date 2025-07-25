@@ -14,7 +14,7 @@ from pipelines.training import training_2heads, training_2heads_v2
 params = {
     'encoder_weights': 'imagenet',
     'model_weights': None,
-    'batch_size_val': 12,
+    'batch_size_val': 16,
     'optimizer': 'adamw',
     'learning_rate': 0.0003,
     'patch_size': 512,
@@ -69,12 +69,12 @@ if __name__ == '__main__':
     params['t_params'] = args.t_params
     params['epochs'] = args.epochs
     # params['out_dir'] = args.out_dir
-    params['out_dir'] = "/scratch/project_465001005/projects/nacala/rebuttal_dir/output"
+    params['out_dir'] = "/scratch/project_465002161/projects/Nacala/outputs/"
     if os.path.exists(params['out_dir']) is False:
         os.makedirs(params['out_dir'])
-    params['log_dir'] = os.path.join(args.out_dir, "logs")
+    params['log_dir'] = os.path.join(params['out_dir'], "logs")
     # params['data_path'] = args.data_path
-    params['data_path'] = "/scratch/project_465001005/projects/nacala/rebuttal_dir/data/"
+    params['data_path'] = "/scratch/project_465002161/projects/Nacala/datasets/"
     params['tensordata_folder'] = os.path.join(params['data_path'], args.tensordata_folder)
     params['val_folder'] = args.val_folder
 

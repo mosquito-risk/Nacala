@@ -1,5 +1,30 @@
 import os
+import torch
 import shutil
+
+
+def apply_color_map(predictions):
+    # Initialize an empty image with the shape [batch_size, 3, height, width]
+    batch_size, height, width = predictions.shape
+    colored_images = torch.zeros((batch_size, 3, height, width), dtype=torch.uint8,
+                                 device=predictions.device)
+    # Define your color map: each class is assigned a unique color
+    color_map = {
+        0: [255, 0, 0],  # Red
+        1: [0, 255, 0],  # Green
+        2: [0, 0, 255],  # Blue
+        3: [255, 255, 0],  # Yellow
+        4: [255, 0, 255],  # Magenta
+        5: [0, 255, 255]  # Cyan
+    }
+    for cls, color in color_map.items():
+        if cls == 0:
+            continue
+        mask = (predictions == cls).unsqueeze(1)  # Add channel dimension
+        for i in range(3):  # For each color channel
+            colored_images[:, i, :, :] += mask[:, 0, :, :] * color[i]
+
+    return colored_images
 
 
 def create_folder(dir_):

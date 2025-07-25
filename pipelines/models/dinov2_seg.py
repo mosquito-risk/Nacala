@@ -59,9 +59,7 @@ class Dinov2ForSemanticSegmentation(Dinov2PreTrainedModel):
 
     def forward(self, pixel_values, output_hidden_states=False, output_attentions=False):
         # use frozen features
-
-        outputs = self.dinov2(pixel_values,
-                              output_hidden_states=output_hidden_states,
+        outputs = self.dinov2(pixel_values, output_hidden_states=output_hidden_states,
                               output_attentions=output_attentions)
         # get the patch embeddings - so we exclude the CLS token
         patch_embeddings = outputs.last_hidden_state[:, 1:, :]

@@ -185,7 +185,7 @@ class TrainSegmentation:
             task = "binary"
             metric_class = 1
 
-        iou_m = JaccardIndex(task=task, num_classes=metric_class, absent_score=0).to(self.device)
+        iou_m = JaccardIndex(task=task, num_classes=metric_class).to(self.device)
         conf = ConfusionMatrix(num_classes=metric_class, task=task).to(self.device)
         accuracy_m = Accuracy(task=task, top_k=1, num_classes=metric_class).to(self.device)
         best_iou = -1
@@ -202,6 +202,7 @@ class TrainSegmentation:
 
             pbar_train = tqdm(enumerate(train_loader), total=len(train_loader), desc="train")
             for i, batch in pbar_train:  # fixme use with torch.cuda.amp.autocast():
+
                 X = batch['X']
                 y = batch['y']
                 if self.weight_folder is not None:

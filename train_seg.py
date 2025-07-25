@@ -56,8 +56,8 @@ if __name__ == '__main__':
                         type=float, default=(0.7, 0.3, 1.0))
     parser.add_argument("--out_dir", type=str, help="Output directory to save trained model and logs",
                         default="./temp")
-    parser.add_argument("--data_path", type=str, help="Path to data folders file",
-                        default='./data/sample/')
+    # parser.add_argument("--data_path", type=str, help="Path to data folders file",
+                        # default='./data/sample/')
     parser.add_argument("--val_folder", type=str, help="Validation folder name", default="valid")
     args = parser.parse_args()
 
@@ -75,12 +75,12 @@ if __name__ == '__main__':
     params['loss_type'] = args.loss_type
     params['t_params'] = args.t_params
     # params['out_dir'] = args.out_dir
-    params['out_dir'] = "/scratch/project_465001005/projects/nacala/rebuttal_dir/output"
+    params['out_dir'] = "/scratch/project_465002161/projects/Nacala/outputs/"
     if os.path.exists(params['out_dir']) is False:
         os.makedirs(params['out_dir'])
-    params['log_dir'] = os.path.join(args.out_dir, "logs")
+    params['log_dir'] = os.path.join(params['out_dir'], "logs")
     # params['data_path'] = args.data_path
-    params['data_path'] = "/scratch/project_465001005/projects/nacala/rebuttal_dir/data/"
+    params['data_path'] = "/scratch/project_465002161/projects/Nacala/datasets/"
     params['tensordata_folder'] = os.path.join(params['data_path'], args.tensordata_folder)
     params['val_folder'] = args.val_folder
 

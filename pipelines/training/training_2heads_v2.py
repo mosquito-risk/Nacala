@@ -18,21 +18,8 @@ from pipelines.datagen import datagen_2heads as datagen
 from pipelines.datagen import tensor_datagen_2heads
 from pipelines.models.load_models import load_model, load_optimizer
 from pipelines.training.loss_functions import estimate_loss
-from utils.common_utils import create_multi_folder, create_folder
+from utils.common_utils import create_multi_folder, create_folder, apply_color_map
 from utils.tensorboard_plots import write_cm
-
-
-def abs_diff_2heads(y_true, y_pred):
-    # count objects in the true and pred batch, get abs diff between them
-    y_true = y_true.detach().cpu().numpy()
-    y_pred = y_pred.detach().cpu().numpy()
-    true_count, pred_count = 0, 0
-    for i in range(y_true.shape[0]):
-        _, num_true = label(y_true)
-        true_count += num_true
-        _, num_pred = label(y_pred)
-        pred_count += num_pred
-    return abs(true_count - pred_count)
 
 
 class TrainSegmentation:
@@ -83,6 +70,8 @@ class TrainSegmentation:
             self.device = torch.device('cpu')
 
     def create_datasets(self, data_folder, set_type="train"):
+        # if set_type == "valid":
+        #     data_folder = "/scratch/project_465001005/projects/nacala/rebuttal_dir/data/valid"
         image_paths = np.array(glob.glob(data_folder + f"/{self.image_folder}/*.tif"))
         label1_paths = np.array(glob.glob(data_folder + f"/{self.label1_folder}/*.tif"))
         label2_paths = np.array(glob.glob(data_folder + f"/{self.label2_folder}/*.tif"))
@@ -109,6 +98,8 @@ class TrainSegmentation:
             if self.tensordata_folder is not None and not os.path.exists(self.tensordata_folder):
                 create_folder(self.tensordata_folder)
             file_folder = os.path.join(self.tensordata_folder, set_type)
+            if not os.path.exists(file_folder):
+                create_folder(file_folder)
             data = tensor_datagen_2heads.TensorDataGenerator(image_paths, label1_paths, label2_paths,
                                                              weight_paths, batch_size=self.batch_size_train,
                                                              patch_size=self.patch_size,
@@ -133,12 +124,11 @@ class TrainSegmentation:
         val_loader = DataLoader(val_data, self.batch_size_val)
 
         # model
-        if self.loss_type == 'cross_entropy_cls':
-            num_classes2 = 6
         model = load_model(self.model_name, self.device, channels=3, num_classes=self.num_classes,
                            pre_trained_weight=self.model_weights, patch_size=self.patch_size,
-                           encoder_weights=self.encoder_weights, head_size=self.head_size, num_classes2=num_classes2)
-        print(f"Model: {model}")
+                           encoder_weights=self.encoder_weights, head_size=self.head_size,
+                           num_classes2=self.num_classes)
+        # print(f"Model: {model}")
 
         # intialize logs and metrics
         outmodel_dir = os.path.join(*[self.out_dir, self.keyword])
@@ -155,21 +145,15 @@ class TrainSegmentation:
         writer = torch.utils.tensorboard.SummaryWriter(f"{self.log_dir}/{tensorboard_folder}")
 
         # metrics
-        iou_ms = [JaccardIndex(task="binary", num_classes=self.num_classes, absent_score=0).to(self.device)
-                  for _ in range(self.num_outputs)]
-        confs = [ConfusionMatrix(num_classes=self.num_classes, task="binary").to(self.device)
+        iou_ms = [JaccardIndex(task="multiclass", num_classes=self.num_classes, absent_score=0).to(self.device)
+                  for _ in range(self.num_outputs)]  # average='micro'
+        confs = [ConfusionMatrix(num_classes=self.num_classes, task="multiclass").to(self.device)
                  for _ in range(self.num_outputs)]
-        accuracy_ms = [Accuracy(task="binary", top_k=1, num_classes=self.num_classes
-                                ).to(self.device)
+        accuracy_ms = [Accuracy(task="multiclass", top_k=1, num_classes=self.num_classes).to(self.device)
                        for _ in range(self.num_outputs)]
-        if self.loss_type == 'cross_entropy_cls':
-            iou_ms[1] = JaccardIndex(task="multiclass", num_classes=6, absent_score=0).to(self.device)
-            confs[1] = ConfusionMatrix(num_classes=6, task="multiclass").to(self.device)
-            accuracy_ms[1] = Accuracy(task="multiclass", top_k=1, num_classes=6).to(self.device)
 
         # training
         best_iou = -1
-        best_mae = 10e10
         optimizer = load_optimizer(self.optimizer, model, learning_rate=self.learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1)
         for epoch in range(self.epochs):
@@ -183,7 +167,7 @@ class TrainSegmentation:
                     w = batch['w']
                 else:
                     w = None
-                if self.model_name == 'dinov2':
+                if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
                     X = F.interpolate(X, size=(448, 448), mode='bilinear')
                     y = F.interpolate(y.float(), size=(448, 448), mode='nearest').long()
                     w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()
@@ -200,12 +184,10 @@ class TrainSegmentation:
                 # metric update
                 data_mask = (w > 0).float()
                 for idx in range(self.num_outputs):  # for multi-head/decoder models
-                    if self.loss_type == 'cross_entropy_cls' and idx == 1:
-                        pred = pred_[:, 1:, :, :]
-                        pred_labels = torch.argmax(pred, dim=1) * data_mask.squeeze(1)
-                    else:
-                        pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
-                        pred_labels = (pred >= 0).float()
+                    start = idx * self.num_classes
+                    end = (idx + 1) * self.num_classes
+                    pred = pred_[:, start:end, :, :]
+                    pred_labels = torch.argmax(pred, dim=1) * data_mask.squeeze(1)
                     single_y = y_[:, idx, :, :]
                     accuracy_ms[idx].update(pred, single_y)
                     iou_ms[idx].update(pred_labels, single_y)
@@ -237,18 +219,14 @@ class TrainSegmentation:
                                   dataformats="NCHW")
             # log multi-label input/outputs
             for j in range(self.num_outputs):
-                writer.add_images(f"train/label_{j}", y_[:, [j], :, :] / 6, global_step=epoch,
-                                  dataformats="NCHW")
+                truth_v = apply_color_map(y_[:, j, :, :])
+                writer.add_images(f"train/label_{j}",  truth_v, global_step=epoch, dataformats="NCHW")
             for idx in range(self.num_outputs):
-                if self.loss_type == 'cross_entropy_cls' and idx == 1:
-                    pred_v = torch.argmax(pred_[:, 1:, :, :], dim=1, keepdim=True).float() * data_mask
-                    vclasses = 6
-                else:
-                    pred_v = (pred_[:, [idx], :, :] >= 0).float() * data_mask
-                    vclasses = self.num_classes
-                writer.add_images(f"train/pred_{idx}", pred_v/vclasses,
-                                  global_step=epoch, dataformats="NCHW")
-
+                start = idx * self.num_classes
+                end = (idx + 1) * self.num_classes
+                pred_v = torch.argmax(pred_[:, start:end, :, :], dim=1, keepdim=True) * data_mask
+                pred_v = apply_color_map(pred_v.squeeze(1))
+                writer.add_images(f"train/pred_{idx}", pred_v, global_step=epoch, dataformats="NCHW")
             # calculate mean iou
             iou = sum([iou_ms[idx].compute() for idx in range(self.num_outputs)]) / self.num_outputs
             writer.add_scalar(f"train/iou_mean", iou, global_step=epoch)
@@ -266,7 +244,6 @@ class TrainSegmentation:
             # validation
             model.eval()
             loss_avg = 0
-            mae = 0
             pbar_val = tqdm(enumerate(val_loader), desc="val")
             for i, batch in pbar_val:
                 X = batch['X']
@@ -276,7 +253,7 @@ class TrainSegmentation:
                 else:
                     w = None
                 with torch.no_grad():
-                    if self.model_name == 'dinov2':
+                    if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
                         X = F.interpolate(X, size=(448, 448), mode='bilinear')
                         y_ = F.interpolate(y_.float(), size=(448, 448), mode='nearest').long()
                         w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()
@@ -289,20 +266,15 @@ class TrainSegmentation:
                     # metric update
                     data_mask = (w > 0).float()
                     for idx in range(self.num_outputs):
-                        if self.loss_type == 'cross_entropy_cls' and idx == 1:
-                            pred = pred_[:, 1:, :, :]
-                            pred_labels = torch.argmax(pred, dim=1) * data_mask.squeeze(1)
-                        else:
-                            pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
-                            pred_labels = (pred >= 0).float()
-                        # pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
-                        # pred_labels = (pred >= 0).float()
+                        start = idx * self.num_classes
+                        end = (idx + 1) * self.num_classes
+                        pred = pred_[:, start:end, :, :]
+                        pred_labels = torch.argmax(pred, dim=1) * data_mask.squeeze(1)
                         single_y = y_[:, idx, :, :]
                         accuracy_ms[idx].update(pred, single_y)
                         iou_ms[idx].update(pred_labels, single_y)
                         confs[idx].update(pred_labels.flatten().to(self.device), single_y.flatten().to(self.device))
-                    temp = torch.where(pred_labels >= 1, 1, 0)
-                    mae += abs_diff_2heads(single_y, temp)
+
                     pbar_val.set_postfix(loss=f'{loss_avg / (i + 1):.4f}', iou0=f'{iou_ms[0].compute():.4f}',
                                          iou1=f'{iou_ms[1].compute():.4f}')
             pbar_val.reset()
@@ -316,17 +288,14 @@ class TrainSegmentation:
                                   dataformats="NCHW")
             # log multi-label input/outputs
             for j in range(self.num_outputs):
-                writer.add_images(f"val/label_{j}", y_[:, [j], :, :] / 6, global_step=epoch,
-                                  dataformats="NCHW")
+                truth_v = apply_color_map(y_[:, j, :, :])
+                writer.add_images(f"val/label_{j}", truth_v, global_step=epoch, dataformats="NCHW")
             for idx in range(self.num_outputs):
-                if self.loss_type == 'cross_entropy_cls' and idx == 1:
-                    pred_v = torch.argmax(pred_[:, 1:, :, :], dim=1, keepdim=True).float() * data_mask
-                    vclasses = 6
-                else:
-                    pred_v = (pred_[:, [idx], :, :] >= 0).float() * data_mask
-                    vclasses = self.num_classes
-                writer.add_images(f"val/pred_{idx}", pred_v/vclasses,
-                                  global_step=epoch, dataformats="NCHW")
+                start = idx * self.num_classes
+                end = (idx + 1) * self.num_classes
+                pred_v = torch.argmax(pred_[:, start:end, :, :], dim=1, keepdim=True) * data_mask
+                pred_v = apply_color_map(pred_v.squeeze(1))
+                writer.add_images(f"val/pred_{idx}", pred_v, global_step=epoch, dataformats="NCHW")
 
             # calculate mean iou
             iou = sum([iou_ms[idx].compute() for idx in range(self.num_outputs)]) / self.num_outputs
@@ -335,7 +304,6 @@ class TrainSegmentation:
 
             # log scalar/metrics values
             writer.add_scalar("val/loss", loss_avg / len(val_loader), global_step=epoch)
-            writer.add_scalar("val/mae", mae, global_step=epoch)
             for idx in range(self.num_outputs):
                 writer.add_scalar(f"val/acc_{idx}", accuracy_ms[idx].compute(), global_step=epoch)
                 writer.add_scalar(f"val/iou_{idx}", iou_ms[idx].compute(), global_step=epoch)
@@ -346,14 +314,14 @@ class TrainSegmentation:
 
             # save model
             if best_iou < iou:
-                best_mae, best_iou = mae, iou
+                best_iou = iou
                 torch.save(
                     model.state_dict(),
                     outmodel_dir + f"/best_model"
                 )
                 # save metrics at every best epoch to single txt file
                 with open(outmodel_dir + f"/best_epochs_metrics_{self.keyword}.txt", "a") as file:
-                    file.write(f"Epoch: {epoch + 1}, Best iou: {best_iou}, Best mae: {best_mae}\n")
+                    file.write(f"Epoch: {epoch + 1}, Best iou: {best_iou}\n")
 
             # save last epoch model with epoch number in it
             torch.save(model.state_dict(), outmodel_dir + f"/last_epoch_{epoch + 1}")

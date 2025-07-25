@@ -11,7 +11,6 @@ import torch.utils.tensorboard
 from torch.utils.data import DataLoader
 from torchmetrics import Accuracy, JaccardIndex, ConfusionMatrix
 from tqdm import tqdm
-from scipy.ndimage import label
 
 # custom imports
 from pipelines.datagen import datagen_2heads as datagen
@@ -20,19 +19,6 @@ from pipelines.models.load_models import load_model, load_optimizer
 from pipelines.training.loss_functions import estimate_loss
 from utils.common_utils import create_multi_folder, create_folder
 from utils.tensorboard_plots import write_cm
-
-
-def abs_diff_2heads(y_true, y_pred):
-    # count objects in the true and pred batch, get abs diff between them
-    y_true = y_true.detach().cpu().numpy()[:, [1], :, :]
-    y_pred = y_pred.detach().cpu().numpy()[:, [1], :, :]
-    true_count, pred_count = 0, 0
-    for i in range(y_true.shape[0]):
-        _, num_true = label(y_true)
-        true_count += num_true
-        _, num_pred = label(y_pred)
-        pred_count += num_pred
-    return abs(true_count - pred_count)
 
 
 class TrainSegmentation:
@@ -113,7 +99,7 @@ class TrainSegmentation:
             if not os.path.exists(file_folder):
                 create_folder(file_folder)
                 print(f"Created tensor data folder: {file_folder}")
-            import ipdb; ipdb.set_trace()
+
             data = tensor_datagen_2heads.TensorDataGenerator(image_paths, label1_paths, label2_paths,
                                                              weight_paths, batch_size=self.batch_size_train,
                                                              patch_size=self.patch_size,
@@ -168,7 +154,6 @@ class TrainSegmentation:
 
         # training
         best_iou = -1
-        best_mae = 10e10
         optimizer = load_optimizer(self.optimizer, model, learning_rate=self.learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1)
         for epoch in range(self.epochs):
@@ -177,7 +162,7 @@ class TrainSegmentation:
             pbar_train = tqdm(enumerate(train_loader), total=len(train_loader), desc="train")
             for i, batch in pbar_train:  # fixme use with torch.cuda.amp.autocast():
                 X = batch['X']
-                y = batch['y']
+                y = torch.where(batch['y']==0, 0, 1)
                 if self.weight_folder is not None:
                     w = batch['w']
                 else:
@@ -198,11 +183,12 @@ class TrainSegmentation:
 
                 # metric update
                 data_mask = (w > 0).float()
+                # import ipdb; ipdb.set_trace()  # for debugging
                 for idx in range(self.num_outputs):  # for multi-head/decoder models
                     pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
                     single_y = y_[:, idx, :, :]
                     pred_labels = (pred >= 0).float()
-                    accuracy_ms[idx].update(pred, single_y)
+                    accuracy_ms[idx].update(pred_labels, single_y)
                     iou_ms[idx].update(pred_labels, single_y)
                     confs[idx].update(pred_labels.flatten().to(self.device), single_y.flatten().to(self.device))
 
@@ -256,11 +242,10 @@ class TrainSegmentation:
             # validation
             model.eval()
             loss_avg = 0
-            mae = 0
             pbar_val = tqdm(enumerate(val_loader), desc="val")
             for i, batch in pbar_val:
                 X = batch['X']
-                y_ = batch['y']
+                y_ = torch.where(batch['y']==0, 0, 1)
                 if self.weight_folder is not None:
                     w = batch['w']
                 else:
@@ -282,11 +267,10 @@ class TrainSegmentation:
                         pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
                         single_y = y_[:, idx, :, :]
                         pred_labels = (pred >= 0).float()
-                        accuracy_ms[idx].update(pred, single_y)
+                        accuracy_ms[idx].update(pred_labels, single_y)
                         iou_ms[idx].update(pred_labels, single_y)
                         confs[idx].update(pred_labels.flatten().to(self.device), single_y.flatten().to(self.device))
 
-                    mae += abs_diff_2heads(y_, (pred_ >= 0).float())
                     pbar_val.set_postfix(loss=f'{loss_avg / (i + 1):.4f}', iou0=f'{iou_ms[0].compute():.4f}',
                                          iou1=f'{iou_ms[1].compute():.4f}')
             pbar_val.reset()
@@ -314,7 +298,7 @@ class TrainSegmentation:
 
             # log scalar/metrics values
             writer.add_scalar("val/loss", loss_avg / len(val_loader), global_step=epoch)
-            writer.add_scalar("val/mae", mae, global_step=epoch)
+
             for idx in range(self.num_outputs):
                 writer.add_scalar(f"val/acc_{idx}", accuracy_ms[idx].compute(), global_step=epoch)
                 writer.add_scalar(f"val/iou_{idx}", iou_ms[idx].compute(), global_step=epoch)
@@ -325,14 +309,14 @@ class TrainSegmentation:
 
             # save model
             if best_iou < iou:
-                best_mae, best_iou = mae, iou
+                best_iou = iou
                 torch.save(
                     model.state_dict(),
                     outmodel_dir + f"/best_model"
                 )
                 # save metrics at every best epoch to single txt file
                 with open(outmodel_dir + f"/best_epochs_metrics_{self.keyword}.txt", "a") as file:
-                    file.write(f"Epoch: {epoch + 1}, Best iou: {best_iou}, Best mae: {best_mae}\n")
+                    file.write(f"Epoch: {epoch + 1}, Best iou: {best_iou}\n")
 
             # save last epoch model with epoch number in it
             torch.save(model.state_dict(), outmodel_dir + f"/last_epoch_{epoch + 1}")
