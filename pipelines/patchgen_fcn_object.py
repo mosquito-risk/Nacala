@@ -256,7 +256,6 @@ class patch_gen:
                                                                     exterior_dist=self.exterior_dist)
 
                             # read energy map within patch window and write
-
                             with MemoryFile() as memfile:
                                 with memfile.open(driver='GTiff', height=row_, width=col_, count=1,
                                                   dtype=energy_map.dtype,

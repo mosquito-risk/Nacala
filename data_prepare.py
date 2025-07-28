@@ -4,31 +4,31 @@ from pipelines import patchgen_fcn_object
 # data parameterrs
 
 params = {
-    'image_dir': '/scratch/project_465001005/projects/nacala_dataset/grid_data/train/',
-    'label_dir': '/scratch/project_465001005/projects/nacala_dataset/grid_data/train/',
-    'out_folder': '/scratch/project_465001005/projects/nacala/rebuttal_dir/20p_data',
+    'image_dir': '/scratch/project_465002161/projects/Nacala/datasets/raw_data/valid',
+    'label_dir': '/scratch/project_465002161/projects/Nacala/datasets/raw_data/valid',
+    'out_folder': '/scratch/project_465002161/projects/Nacala/datasets/ablation/valid',
     'patch_size': 512,
     'overlap': 0,
     'label_attribute': 'mater_id',
-    'write_images': True,
-    'coco_labels': True,
-    'yolo_labels': True,
-    'yolo_binary': True,
-    'patch_labels': True,
+    'write_images': False,
+    'coco_labels': False,
+    'yolo_labels': False,
+    'yolo_binary': False,
+    'patch_labels': False,
     'geojson_labels': False,
     'int_mask': False,
     'inter_per': 50,
-    'weight_mask': True,
+    'weight_mask': False,
     'energy_mask': False,
     'level_dist': 3,
     'int_mask_euc': True,
-    'exterior_dist': 10,
+    'exterior_dist': 5,
     'coco_category_dict': 'nacala',
     'w0': 10,
     'sigma': 5,
     'label_format': 'geojson',
     'data_per_thresh': 0.4,
-    'subset_info': '../data/nacala_dataset/raw_data/scaling_files/scaling_law20p.shp'
+    # 'subset_info': '../data/nacala_dataset/raw_data/scaling_files/scaling_law20p.shp'
 }
 
 # save params as json

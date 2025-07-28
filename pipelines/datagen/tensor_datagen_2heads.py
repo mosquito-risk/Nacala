@@ -31,7 +31,7 @@ def load_dataset(image_paths, label1_paths, label2_paths, weight_paths=None, cha
     except FileNotFoundError:
         num_images = len(image_paths)
         images = torch.empty((num_images, channel_count, patch_size, patch_size), dtype=torch.uint8)
-        labels = torch.empty((num_images, 2, patch_size, patch_size), dtype=torch.uint8)
+        labels = torch.empty((num_images, 2, patch_size, patch_size), dtype=torch.float32)
         weights = torch.empty((num_images, 1, patch_size, patch_size), dtype=torch.uint8)
         for i, (image_path, label1_path, label2_path) in tqdm(enumerate(zip(image_paths, label1_paths, label2_paths)),
                                                               total=num_images, desc="Loading data to memory: "):
@@ -48,7 +48,7 @@ def load_dataset(image_paths, label1_paths, label2_paths, weight_paths=None, cha
 
             _label = np.stack([label2, label1], axis=0)
             images[i] = torch.tensor(_image, dtype=torch.uint8)
-            labels[i] = torch.tensor(_label, dtype=torch.uint8)
+            labels[i] = torch.tensor(_label, dtype=torch.float32)
 
             if weight_paths is not None:
                 with rasterio.open(weight_paths[i]) as src:
@@ -78,9 +78,8 @@ def load_dataset(image_paths, label1_paths, label2_paths, weight_paths=None, cha
 
 
 class TensorDataGenerator(Dataset):
-    def __init__(self, image_paths, label1_paths, label2_paths, weight_paths=None, batch_size=32, patch_size=128,
-                 device='cpu', data_device='cpu', output_folder="test"):
-        self.batch_size = batch_size
+    def __init__(self, image_paths, label1_paths, label2_paths, weight_paths=None, patch_size=128,
+                 device='cpu', data_device='cpu', output_folder="test", pixel_dist=None):
         self.patch_size = patch_size
         self.device = device
         self.data_device = data_device
@@ -88,7 +87,7 @@ class TensorDataGenerator(Dataset):
         self.label2_paths = label2_paths
         self.image_paths = image_paths
         self.weight_paths = weight_paths
-        self.patch_size = patch_size
+        self.pixel_dist = pixel_dist  # distance for second head label
 
         self.channel_count = 3
         # augmentation chances
@@ -115,10 +114,13 @@ class TensorDataGenerator(Dataset):
         return len(self.images)
 
     def __getitem__(self, index):
-        X = self.images[index]/255
-        y = self.labels[index]
+        X = self.images[index].clone()/255
+        y = self.labels[index].clone()
+        y[1] = torch.where(y[1] == 0, 0, 1) # complete building mask for first head
+        if self.pixel_dist is not None:
+            y[0] = torch.where(y[0] > self.pixel_dist, 1, 0)  # second head label is distance mask
         if self.weights is not None:
-            w = self.weights[index]
+            w = self.weights[index].clone()
 
         # Optionally apply your augmentations here
         file_dict = {'X': X.float().to(self.device),

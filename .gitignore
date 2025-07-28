@@ -10,6 +10,9 @@ __pycache__/
 datasets/dinov2_features
 temp
 
+# files
+*.tif
+
 # C extensions
 *.so
 

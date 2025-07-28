@@ -28,7 +28,7 @@ class TrainSegmentation:
                  weight_folder=None, keyword="test", load_data2memory=False, tensordata_folder=None,
                  out_dir="../../runs/test", log_dir="../../runs/test/logs", train_folder="train", val_folder="valid",
                  load_data2device='cpu', encoder_weights=None, loss_type="cross_entropy", head_size='n',
-                 t_params=(0.7, 0.3, 1.0)):
+                 pixel_dist=None):
         self.batch_size_train = batch_size_train
         self.batch_size_val = batch_size_val
         self.data_path = data_path
@@ -55,8 +55,8 @@ class TrainSegmentation:
         self.loss_type = loss_type
         self.encoder_weights = encoder_weights
         self.head_size = head_size
-        self.t_params = t_params
         self.num_outputs = 2
+        self.pixel_dist = pixel_dist
 
         # get device and print device info
         if torch.cuda.is_available():
@@ -90,7 +90,7 @@ class TrainSegmentation:
         print(f"No. of images: {len(image_paths)}, No. of labels-1 {len(label1_paths)},"
               f" No. of labels-2 {len(label2_paths)}, No. of wieght"
               f" masks {len(weight_paths) if self.weight_folder is not None else 0}")
-        assert len(image_paths) == len(label2_paths) == len(label2_paths) != 0, "Number of patches/images are not equal"
+        assert len(image_paths) == len(label1_paths) == len(label2_paths) != 0, "Number of patches/images are not equal"
         if self.load_data2memory:
             if self.tensordata_folder is not None and not os.path.exists(self.tensordata_folder):
                 create_folder(self.tensordata_folder)
@@ -101,11 +101,12 @@ class TrainSegmentation:
                 print(f"Created tensor data folder: {file_folder}")
 
             data = tensor_datagen_2heads.TensorDataGenerator(image_paths, label1_paths, label2_paths,
-                                                             weight_paths, batch_size=self.batch_size_train,
+                                                             weight_paths,
                                                              patch_size=self.patch_size,
                                                              device=self.device,
                                                              data_device=self.load_data2device,
-                                                             output_folder=file_folder)
+                                                             output_folder=file_folder,
+                                                             pixel_dist=self.pixel_dist)
         else:
             data = datagen.DataGenerator(image_paths, label1_paths, label2_paths, weight_paths,
                                          batch_size=self.batch_size_train, patch_size=self.patch_size,
@@ -127,7 +128,7 @@ class TrainSegmentation:
         model = load_model(self.model_name, self.device, channels=3, num_classes=self.num_classes,
                            pre_trained_weight=self.model_weights, patch_size=self.patch_size,
                            encoder_weights=self.encoder_weights, head_size=self.head_size)
-        print(f"Model: {model}")
+        # print(f"Model: {model}")
 
         # intialize logs and metrics
         outmodel_dir = os.path.join(*[self.out_dir, self.keyword])
@@ -144,12 +145,11 @@ class TrainSegmentation:
         writer = torch.utils.tensorboard.SummaryWriter(f"{self.log_dir}/{tensorboard_folder}")
 
         # metrics
-        iou_ms = [JaccardIndex(task="binary", num_classes=self.num_classes, absent_score=0).to(self.device)
+        iou_ms = [JaccardIndex(task="binary").to(self.device)
                   for _ in range(self.num_outputs)]
-        confs = [ConfusionMatrix(num_classes=self.num_classes, task="binary").to(self.device)
+        confs = [ConfusionMatrix(task="binary").to(self.device)
                  for _ in range(self.num_outputs)]
-        accuracy_ms = [Accuracy(task="binary", top_k=1, num_classes=self.num_classes
-                                ).to(self.device)
+        accuracy_ms = [Accuracy(task="binary").to(self.device)
                        for _ in range(self.num_outputs)]
 
         # training
@@ -162,7 +162,7 @@ class TrainSegmentation:
             pbar_train = tqdm(enumerate(train_loader), total=len(train_loader), desc="train")
             for i, batch in pbar_train:  # fixme use with torch.cuda.amp.autocast():
                 X = batch['X']
-                y = torch.where(batch['y']==0, 0, 1)
+                y = batch['y']
                 if self.weight_folder is not None:
                     w = batch['w']
                 else:
@@ -170,12 +170,13 @@ class TrainSegmentation:
                 if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
                     X = F.interpolate(X, size=(448, 448), mode='bilinear')
                     y = F.interpolate(y.float(), size=(448, 448), mode='nearest').long()
-                    w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()
+                    if w is not None:
+                        w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()
 
-                X, y_, w = train_data.augment(X, y, self.device, w)
+                X, y, w = train_data.augment(X, y, self.device, w)
                 pred_ = model(X)
-                loss = estimate_loss(pred_, y_, self.model_name, w.squeeze(1), loss_type=self.loss_type,
-                                     num_classes=self.num_classes, t_params=self.t_params)
+                loss = estimate_loss(pred_, y, self.model_name, w.squeeze(1) if w is not None else None,
+                                     loss_type=self.loss_type, num_classes=self.num_classes)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -183,14 +184,13 @@ class TrainSegmentation:
 
                 # metric update
                 data_mask = (w > 0).float()
-                # import ipdb; ipdb.set_trace()  # for debugging
-                for idx in range(self.num_outputs):  # for multi-head/decoder models
-                    pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
-                    single_y = y_[:, idx, :, :]
-                    pred_labels = (pred >= 0).float()
-                    accuracy_ms[idx].update(pred_labels, single_y)
-                    iou_ms[idx].update(pred_labels, single_y)
-                    confs[idx].update(pred_labels.flatten().to(self.device), single_y.flatten().to(self.device))
+                pred = (pred_ > 0).float().detach() * data_mask
+                for idx in range(self.num_outputs):
+                    pd = pred[:, idx, :, :]
+                    gt = y[:, idx, :, :]
+                    accuracy_ms[idx].update(pd, gt)
+                    iou_ms[idx].update(pd, gt)
+                    confs[idx].update(pd.flatten().to(self.device), gt.flatten().to(self.device))
 
                 iou_mean = sum([iou_ms[idx].compute() for idx in range(self.num_outputs)]) / self.num_outputs
                 if torch.cuda.is_available():  # Check if CUDA is available
@@ -209,43 +209,36 @@ class TrainSegmentation:
             pbar_train.reset()
 
             # log image and weights
-            b_, c_, h_, w_ = X.shape
-            if c_ > 3:  # first three channels considered as rgb
-                X = X[:, :3]  # if image channels are more than three
             writer.add_images("train/input_rgb", X, global_step=epoch, dataformats="NCHW")
             if self.weight_folder is not None:
                 writer.add_images("train/weights", (w - w.min()) / (w.max() - w.min()), global_step=epoch,
                                   dataformats="NCHW")
-            # log multi-label input/outputs
-            for j in range(self.num_outputs):
-                writer.add_images(f"train/label_{j}", y_[:, [j], :, :] / self.num_classes, global_step=epoch,
-                                  dataformats="NCHW")
-            for idx in range(self.num_outputs):
-                pred_v = (pred_[:, [idx], :, :] >= 0).float() * data_mask
-                writer.add_images(f"train/pred_{idx}", pred_v / self.num_classes,
-                                  global_step=epoch, dataformats="NCHW")
 
             # calculate mean iou
             iou = sum([iou_ms[idx].compute() for idx in range(self.num_outputs)]) / self.num_outputs
             writer.add_scalar(f"train/iou_mean", iou, global_step=epoch)
-
-            # log scalar/metrics values
             writer.add_scalar("train/loss", loss_avg / len(train_loader), global_step=epoch)
+
+            # log multi-label input and outputs
             for idx in range(self.num_outputs):
+                writer.add_images(f"train/label_{idx}", y[:, [idx], :, :], global_step=epoch, dataformats="NCHW")
+                writer.add_images(f"train/pred_{idx}", pred[:, [idx], :, :], global_step=epoch, dataformats="NCHW")
+
                 writer.add_scalar(f"train/acc_{idx}", accuracy_ms[idx].compute(), global_step=epoch)
-                accuracy_ms[idx].reset()
                 writer.add_scalar(f"train/iou_{idx}", iou_ms[idx].compute(), global_step=epoch)
-                iou_ms[idx].reset()
                 write_cm(writer, self.num_classes, confs[idx].compute(), 'train', idx)
+
+                accuracy_ms[idx].reset()
+                iou_ms[idx].reset()
                 confs[idx].reset()
 
             # validation
             model.eval()
             loss_avg = 0
-            pbar_val = tqdm(enumerate(val_loader), desc="val")
+            pbar_val = tqdm(enumerate(val_loader), total=len(val_loader), desc="val")
             for i, batch in pbar_val:
                 X = batch['X']
-                y_ = torch.where(batch['y']==0, 0, 1)
+                y = batch['y']
                 if self.weight_folder is not None:
                     w = batch['w']
                 else:
@@ -253,53 +246,42 @@ class TrainSegmentation:
                 with torch.no_grad():
                     if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
                         X = F.interpolate(X, size=(448, 448), mode='bilinear')
-                        y_ = F.interpolate(y_.float(), size=(448, 448), mode='nearest').long()
+                        y = F.interpolate(y.float(), size=(448, 448), mode='nearest').long()
                         w = F.interpolate(w.float(), size=(448, 448), mode='nearest').long()
                     pred_ = model(X)
-                    loss = estimate_loss(pred_, y_, self.model_name, w.squeeze(1), loss_type=self.loss_type,
-                                         num_classes=self.num_classes,
-                                         t_params=self.t_params)
+                    loss = estimate_loss(pred_, y, self.model_name, w.squeeze(1) if w is not None else None,
+                                         loss_type=self.loss_type, num_classes=self.num_classes)
                     loss_avg += loss.item()
 
                     # metric update
                     data_mask = (w > 0).float()
+                    pred = (pred_ > 0).float() * data_mask
                     for idx in range(self.num_outputs):
-                        pred = pred_[:, idx, :, :] * data_mask.squeeze(1)
-                        single_y = y_[:, idx, :, :]
-                        pred_labels = (pred >= 0).float()
-                        accuracy_ms[idx].update(pred_labels, single_y)
-                        iou_ms[idx].update(pred_labels, single_y)
-                        confs[idx].update(pred_labels.flatten().to(self.device), single_y.flatten().to(self.device))
+                        pd = pred[:, idx, :, :]
+                        gt = y[:, idx, :, :]
+                        accuracy_ms[idx].update(pd, gt)
+                        iou_ms[idx].update(pd, gt)
+                        confs[idx].update(pd.flatten().to(self.device), gt.flatten().to(self.device))
 
                     pbar_val.set_postfix(loss=f'{loss_avg / (i + 1):.4f}', iou0=f'{iou_ms[0].compute():.4f}',
                                          iou1=f'{iou_ms[1].compute():.4f}')
             pbar_val.reset()
 
             # log image and weights
-            if c_ > 3:  # first three channels considered as rgb
-                X = X[:, :3]  # if image channels are more than three
             writer.add_images("val/input_rgb", X, global_step=epoch, dataformats="NCHW")
             if self.weight_folder is not None:
                 writer.add_images("val/weights", (w - w.min()) / (w.max() - w.min()), global_step=epoch,
                                   dataformats="NCHW")
-            # log multi-label input/outputs
-            for j in range(self.num_outputs):
-                writer.add_images(f"val/label_{j}", y_[:, [j], :, :] / self.num_classes, global_step=epoch,
-                                  dataformats="NCHW")
-            for idx in range(self.num_outputs):
-                pred_v = (pred_[:, [idx], :, :] >= 0).float() * data_mask
-                writer.add_images(f"val/pred_{idx}", pred_v / self.num_classes,
-                                  global_step=epoch, dataformats="NCHW")
-
             # calculate mean iou
             iou = sum([iou_ms[idx].compute() for idx in range(self.num_outputs)]) / self.num_outputs
-            if self.num_outputs > 1:
-                writer.add_scalar(f"val/iou_mean", iou, global_step=epoch)
-
-            # log scalar/metrics values
+            writer.add_scalar(f"val/iou_mean", iou, global_step=epoch)
             writer.add_scalar("val/loss", loss_avg / len(val_loader), global_step=epoch)
 
+            # log multi-label input/outputs
             for idx in range(self.num_outputs):
+                writer.add_images(f"val/label_{idx}", y[:, [idx], :, :], global_step=epoch, dataformats="NCHW")
+                writer.add_images(f"val/pred_{idx}", pred[:, [idx], :, :], global_step=epoch, dataformats="NCHW")
+
                 writer.add_scalar(f"val/acc_{idx}", accuracy_ms[idx].compute(), global_step=epoch)
                 writer.add_scalar(f"val/iou_{idx}", iou_ms[idx].compute(), global_step=epoch)
                 write_cm(writer, self.num_classes, confs[idx].compute(), 'val', idx)
@@ -310,10 +292,12 @@ class TrainSegmentation:
             # save model
             if best_iou < iou:
                 best_iou = iou
-                torch.save(
-                    model.state_dict(),
-                    outmodel_dir + f"/best_model"
-                )
+                torch.save({
+                    'epoch': epoch + 1,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'iou': best_iou
+                }, outmodel_dir + "/best_model.pt")
                 # save metrics at every best epoch to single txt file
                 with open(outmodel_dir + f"/best_epochs_metrics_{self.keyword}.txt", "a") as file:
                     file.write(f"Epoch: {epoch + 1}, Best iou: {best_iou}\n")
@@ -323,6 +307,5 @@ class TrainSegmentation:
             # delete previous model
             if epoch > 0:
                 os.remove(outmodel_dir + f"/last_epoch_{epoch}")
-
             # scheduler step
             scheduler.step()

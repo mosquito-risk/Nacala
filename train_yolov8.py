@@ -4,6 +4,26 @@ sys.path.append('../')
 from ultralytics import YOLO
 import argparse
 
+import torch
+from torch.serialization import add_safe_globals
+import torch.nn as nn
+
+# Ultralytics modules
+from ultralytics.nn.tasks import SegmentationModel
+from ultralytics.nn.modules import Conv, C2f, Bottleneck, SPPF, DWConv
+
+# Register safe globals for PyTorch unpickling
+add_safe_globals([
+    # Standard PyTorch modules
+    nn.Sequential, nn.Conv2d, nn.BatchNorm2d, nn.ReLU, nn.SiLU, nn.ModuleList,
+    nn.ModuleDict, nn.Upsample, nn.Identity, nn.Sigmoid,
+
+    # Ultralytics YOLO modules
+    SegmentationModel,
+    Conv, C2f, Bottleneck, SPPF, DWConv
+])
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--keyword", type=str, help="Model name", default="test")
@@ -14,14 +34,14 @@ if __name__ == '__main__':
 
     # Load a model
     model = YOLO("yolov8n-seg.yaml")  # build a new model from scratch
-    # model = YOLO("yolov8n-seg.pt")  # load a model from a file
+    model.load("yolov8n-seg.pt")  # load a model from a file
 
     # Classification model with hyperparameters tuned on train dataset
     model.train(data=args.data_path,
                 imgsz=640,
-                epochs=100,
+                epochs=300,
                 val=True,
-                batch=4,  # batch size
+                batch=16,  # batch size
                 label_smoothing=0.1,
                 name=keyword,
                 amp=False,
