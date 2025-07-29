@@ -160,11 +160,12 @@ class TrainSegmentation:
             model.train()
             loss_avg = 0
             pbar_train = tqdm(enumerate(train_loader), total=len(train_loader), desc="train")
-            for i, batch in pbar_train:  # fixme use with torch.cuda.amp.autocast():
+            for i, batch in pbar_train:
                 X = batch['X']
                 y = batch['y']
                 if self.weight_folder is not None:
                     w = batch['w']
+                    # y[:, 1] = torch.where(w[:, 0] >=5, 1, 0)  # fixme for running new experiment
                 else:
                     w = None
                 if self.model_name == 'dinov2' or self.model_name == 'dinov2_2heads':
@@ -241,6 +242,7 @@ class TrainSegmentation:
                 y = batch['y']
                 if self.weight_folder is not None:
                     w = batch['w']
+                    # y[:, 1] = torch.where(w[:, 0] >=5, 1, 0) # fixme for running new experiment
                 else:
                     w = None
                 with torch.no_grad():

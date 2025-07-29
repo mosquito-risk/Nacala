@@ -104,7 +104,6 @@ class ModelsClass(base_class.BaseClass):
             pred = torch.sigmoid(pred)
             zero_mask = (channel_sum != 0).expand_as(pred)
             pred = (pred * zero_mask).detach().cpu()
-            # pred = F.softmax(pred, dim=1).detach().cpu()  # completely switching to single logit output mode
             mask = masks[idx]
             for i, (col, row, wi, he) in enumerate(batch_pos):
                 p = pred[i, :, :he, :wi]

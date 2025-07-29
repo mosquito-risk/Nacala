@@ -116,9 +116,11 @@ class TensorDataGenerator(Dataset):
     def __getitem__(self, index):
         X = self.images[index].clone()/255
         y = self.labels[index].clone()
-        y[1] = torch.where(y[1] == 0, 0, 1) # complete building mask for first head
+        y0 = torch.where(y[1] == 0, 0, 1) # complete building mask for first head
         if self.pixel_dist is not None:
-            y[0] = torch.where(y[0] > self.pixel_dist, 1, 0)  # second head label is distance mask
+            y1 = torch.where(y[0] > self.pixel_dist, 1, 0)  # For DOW approach
+            y[1] = y1
+        y[0] = y0
         if self.weights is not None:
             w = self.weights[index].clone()
 

@@ -62,7 +62,7 @@ def load_model(model_name, device, channels=3, num_classes=2, pre_trained_weight
     else:
         raise NotImplementedError(f' {model_name} is not implemeted...')
     if pre_trained_weight is not None:
-        model.load_state_dict(torch.load(pre_trained_weight, map_location=device))
+        model.load_state_dict(torch.load(pre_trained_weight, map_location=device)['model_state_dict'])
 
     return model.to(device).eval()
 

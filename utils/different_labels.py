@@ -18,13 +18,13 @@ def watershed_image(input_array):
 def single_output_from_multihead(head1, head2):
     """
     Create watershed image on input_array1 using input_array2 as markers
-    :param head1: first head's output of the model
-    :param head2: second head's output of the model
+    :param head1: first head's output of the model (complete mask)
+    :param head2: second head's output of the model (interior mask)
     :return: watershed image
     """
-    input_dist = head2 == 0
+    input_dist = head2 == 0                                         # estimate euc dist from interior mask
     distance = ndi.distance_transform_edt(input_dist)
-    distance = np.where(head1 == 1, distance, 0).astype(np.uint16)
+    distance = np.where(head1 == 1, distance, 0).astype(np.uint16)  # take only distance where complete mask is 1
     return watershed(distance, connectivity=2, mask=head1)
 
 def single_output_from_multihead_cls(head1, head2):

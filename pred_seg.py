@@ -21,11 +21,11 @@ if __name__ == '__main__':
     parser.add_argument("--model_name", type=str, help="Model name", default="uresnet34")
     parser.add_argument("--keyword", type=str, help="Keyword for output filenames", default="test")
     parser.add_argument("--data_dir", type=str, help="Data directory for predictions",
-                        default="./datasets/sample/test/")
+                        default="/scratch/project_465002161/projects/Nacala/datasets/raw_data/valid")
     parser.add_argument("--weights_folder", type=str, help="Model weights directory",
-                        default="./temp/unet1/")
+                        default="/scratch/project_465002161/projects/Nacala/outputs")
     parser.add_argument("--classifier_path", type=str, help="Classifier trained on DINOv2 features",
-                        default="./temp/classifier/subset80p_model.pkl")
+                        default="./temp/classifier/logistic_model.pkl")
     parser.add_argument("--mask_decision", type=str, help="mask decision for multi head unet",
                         default="both")
     parser.add_argument("--dt_geojson", type=str, help="Detected output from images", default=None)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     params['image_dir'] = args.data_dir
     params['classifier_path'] = args.classifier_path
-    params['weights_path'] = os.path.join(args.weights_folder, 'best_model')
+    params['weights_path'] = os.path.join(args.weights_folder, args.keyword, 'best_model.pt')
     params['out_dir'] = './temp'
 
     if args.dt_geojson is None:
