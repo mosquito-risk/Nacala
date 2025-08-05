@@ -1,6 +1,7 @@
 import numpy as np
 # from data import *
 from p80_data import *
+from data_SRS import *
 from operator import itemgetter
 
 
@@ -122,5 +123,20 @@ dino_dow_t2_m = [dino_dow_t2_m1, dino_dow_t2_m2, dino_dow_t2_m3, dino_dow_t2_m4,
 unet_dow_t1_m = [unet_dow_t1_m1, unet_dow_t1_m2, unet_dow_t1_m3, unet_dow_t1_m4, unet_dow_t1_m5]
 unet_dow_t2_m = [unet_dow_t2_m1, unet_dow_t2_m2, unet_dow_t2_m3, unet_dow_t2_m4, unet_dow_t2_m5]
 
-estimate_metrics(yolo_t2_b)
+unet_dow_5px = [PixDist05_1, PixDist05_2, PixDist05_3, PixDist05_4, PixDist05_5]
+unet_dow_10px = [PixDist10_1, PixDist10_2, PixDist10_3, PixDist10_4, PixDist10_5]
+unet_dow_15px = [PixDist15_1, PixDist15_2, PixDist15_3, PixDist15_4, PixDist15_5]
+unet_dow_20px = [PixDist20_1, PixDist20_2, PixDist20_3, PixDist20_4, PixDist20_5]
+unet_dow_25px = [PixDist25_1, PixDist25_2, PixDist25_3, PixDist25_4, PixDist25_5]
+
+unet_boundary_w1 = [unet_boundary_w11, unet_boundary_w12, unet_boundary_w13, unet_boundary_w14, unet_boundary_w15]
+unet_boundary_w5 = [unet_boundary_w51, unet_boundary_w52, unet_boundary_w53, unet_boundary_w54, unet_boundary_w55]
+
+unet_boundary_w1_test = [unet_boundary_w11_test, unet_boundary_w12_test, unet_boundary_w13_test,
+                                 unet_boundary_w14_test, unet_boundary_w15_test]
+unet_boundary_w1_test2 = [unet_boundary_w11_test2, unet_boundary_w12_test2, unet_boundary_w13_test2,
+                                 unet_boundary_w14_test2, unet_boundary_w15_test2]
+
+# Estimate metrics for UNet DOW
+estimate_metrics(unet_boundary_w1_test2)
 

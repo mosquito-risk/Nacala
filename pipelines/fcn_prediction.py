@@ -322,6 +322,14 @@ class FCNPredict(models_class.ModelsClass):
                 raise ValueError(f"Invalid mask shapes: {mask1.shape}, {mask2.shape}, {self.num_classes}")
             class_array = single_output_from_multihead(class_array1, class_array2)
 
+        elif mask_decision == "boundary":
+            mask1 = masks[0].detach().cpu().numpy()
+            mask2 = masks[1].detach().cpu().numpy()
+            assert mask1.shape[0] == mask2.shape[0] == self.num_classes == 1
+            class_array1 = np.where(mask1 >= 0.5, 1, 0).squeeze()
+            class_array2 = np.where(mask2 >= 0.5, 1, 0).squeeze()
+            score_array = mask1.squeeze()  # only score array from mask1 considered
+            class_array = np.where(class_array2==1, 0, class_array1).astype(np.uint8)
 
         elif mask_decision == "mask1" or mask_decision == "mask2":
             # fixme: not implemented for single logit

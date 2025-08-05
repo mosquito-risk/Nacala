@@ -18,10 +18,10 @@ from pipelines import accuracy_metrics
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name", type=str, help="Model name", default="uresnet34")
+    parser.add_argument("--model_name", type=str, help="Model name", default="unet_2heads")
     parser.add_argument("--keyword", type=str, help="Keyword for output filenames", default="test")
     parser.add_argument("--data_dir", type=str, help="Data directory for predictions",
-                        default="/scratch/project_465002161/projects/Nacala/datasets/raw_data/valid")
+                        default="/scratch/project_465002161/projects/Nacala/datasets/raw_data/test2")
     parser.add_argument("--weights_folder", type=str, help="Model weights directory",
                         default="/scratch/project_465002161/projects/Nacala/outputs")
     parser.add_argument("--classifier_path", type=str, help="Classifier trained on DINOv2 features",
