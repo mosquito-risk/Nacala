@@ -1,11 +1,11 @@
 const CITATION = `
-@misc{guthula2024nacalaroofmaterial,
-    title={Nacala-Roof-Material: Drone Imagery for Roof Detection, Classification, and Segmentation to Support Mosquito-borne Disease Risk Assessment}, 
-    author={Venkanna Babu Guthula and Stefan Oehmcke and Remigio Chilaule and Hui Zhang and Nico Lang and Ankit Kariryaa and Johan Mottelson and Christian Igel},
-    year={2024},
-    eprint={2406.04949},
-    archivePrefix={arXiv},
-    primaryClass={cs.CV}
+@article{guthula2025drone,
+  title={Drone imagery for roof detection, classification, and segmentation to support Mosquito-borne disease risk assessment: The Nacala-Roof-Material dataset},
+  author={Guthula, Venkanna Babu and Oehmcke, Stefan and Chilaule, Remigio and Zhang, Hui and Lang, Nico and Kariryaa, Ankit and Mottelson, Johan and Igel, Christian},
+  journal={Science of Remote Sensing},
+  pages={100306},
+  year={2025},
+  publisher={Elsevier}
 }
 `
 
